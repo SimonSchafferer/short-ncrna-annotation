@@ -1,0 +1,23 @@
+Long Sequences:
+Perform gapped alignment	T
+Cost to open a gap	5
+Cost to extend a gap	2
+Filter query sequence	T
+Penalty for a mismatch in the blast portion of run	-3
+Reward for a match in the blast portion of run	1
+Expectation value	0.0001
+Word size	11
+Number of one-line descriptions	20
+Number of alignments to show	20
+
+Short Sequences parameters:
+Perform gapped alignment	T
+Cost to open a gap	5
+Cost to extend a gap	2
+Filter query sequence	T
+Penalty for a mismatch in the blast portion of run	-3
+Reward for a match in the blast portion of run	1
+Expectation value	0.0001
+Word size	11
+Number of one-line descriptions	20
+Number of alignments to show	20
