@@ -30,17 +30,21 @@ save( ensembl_gtf_hg19,  file=file.path( pathHSA, "ensembl_gtf_hg19.rda" ))
 # ensembl: features and protein_coding genes
 # if no biotype is present then user must specify feature annotation or gene annotation
 
-# library(rtracklayer)
+library(rtracklayer)
 # library(Biostrings)
 # library(XML)
 library(sncRNAannotation)
 
+# 
+# candidatesOfInterest = "/media/Rstick/workspace/ncAnnotation/data/testInterestCand.bed"
+# candidatesOfInterest = import( candidatesOfInterest )
 
-candidatesOfInterest = "/media/Rstick/workspace/ncAnnotation/data/testInterestCand.bed"
-candidatesOfInterest = import( candidatesOfInterest )
+candidateOfInterest = GRanges(seqnames="chr4", IRanges(155429005,155429094), strand="-")
 
-ensembl = new("GeneAnnotation", "ensemblAnnot", system.file("resources/ensembl/", package="sncRNAannotation"),"ensembl_gtf_v67_mm9.rda", candidatesOfInterest)
-refseq = new("GeneAnnotation", "refseqAnnot",system.file("resources/UCSC/", package="sncRNAannotation"),"refseqGenes_gtf_ucsc_mm9.rda", candidatesOfInterest)
+ensembl = new("GeneAnnotation", "ensemblAnnot", system.file("resources/ensembl/", package="sncRNAannotation"),"ensembl_gtf_v67_mm9.rda", candidateOfInterest)
+refseq = new("GeneAnnotation", "refseqAnnot",system.file("resources/ucsc/", package="sncRNAannotation"),"refseqGenes_gtf_ucsc_mm9.rda", candidateOfInterest)
+
+
 
 
 
