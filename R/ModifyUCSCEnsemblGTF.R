@@ -17,10 +17,16 @@ createRObject_gtf = function( pathToGTF, filename, beginMetadata=6, type="ucsc")
   require(rtracklayer)
   currWd = getwd()
   message(paste0("Importing file", file.path(pathToGTF,filename)) )
-  gtf_file = import( file.path(pathToGTF,filename),format="gff", asRangedData=FALSE )
+  
+  if( type == "ensembl" ){
+    gtf_file = import( file.path(pathToGTF,filename),asRangedData=FALSE )
+  } else{
+    gtf_file = import( file.path(pathToGTF,filename),format="gff", asRangedData=FALSE )
+  }
+    
   gtf_file = as.data.frame( gtf_file ) 
   
-  if( gencode ){
+  if( type == "gencode" ){
     warning("GEncode is currently not supported properly")
     #modifying some columns since files from gencode needs to have several columns separated transcript_id, gene_id separated after import by rtracklayer 
     gtfColNames = colnames(gtf_file)
@@ -32,14 +38,14 @@ createRObject_gtf = function( pathToGTF, filename, beginMetadata=6, type="ucsc")
       res = sub(";","",sub( paste0(".*",x," " ) ,"", groupGTF))
       res = gsub("\"","",res)
       res = sub(" .*","",res)
-      return(res)  
+      return(res)
     },groupGTF )
     names(extraCols) = gencode_names
     gtf_file = gtf_file[,-which(gtfColNames == "group")]
     extraCols = do.call(cbind, extraCols)
     gtf_file = cbind(gtf_file, extraCols)
     colnames(gtf_file)[which(colnames(gtf_file) == "gene_type")] = "type" #have to change to be consistent
-  } else if( ucsc ){
+  } else if( type == "ucsc" ){
     #modifying some columns since files from ucsc genome browser need to have the transcript_id, gene_id separated after import by rtracklayer 
     gtf_file$transcript_id = sub(";","",sub(".*transcript_id ","",gtf_file$group))
     gtf_file$gene_id = sub(";.*","",sub("gene_id ","",gtf_file$group))
@@ -66,6 +72,16 @@ createRObject_gtf = function( pathToGTF, filename, beginMetadata=6, type="ucsc")
   gtf_file = read.table( modTablename , sep="\t", header=TRUE)
   gtf_fileGR = with( gtf_file, GRanges(seqnames=seqnames, IRanges(start, end, width), strand) )
   elementMetadata(gtf_fileGR) = gtf_file[,beginMetadata:dim(gtf_file)[2]]
+  
+  if( type == "ensembl" ){
+    seqNamesToChange = seqlevels(gtf_fileGR)
+    idxNumberedChromosomes = grep( "^[0-9]{1,2}$",seqNamesToChange )
+    idxCharChromosomes = grep( "[XY]{1}$",seqNamesToChange )
+    idxMitoChromosome = grep( "^MT$",seqNamesToChange )
+    seqNamesToChange[idxMitoChromosome] = "chrM"
+    seqNamesToChange[c(idxNumberedChromosomes,idxCharChromosomes )] = paste0( "chr", seqNamesToChange[c( c(idxNumberedChromosomes,idxCharChromosomes )) ] )
+    seqlevels(gtf_fileGR) = seqNamesToChange
+  }
   
   message("Cleaning...")
   file.remove( file.path(tmpOut, tablename), file.path(tmpOut, modTablename)  )
