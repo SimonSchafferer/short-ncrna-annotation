@@ -1,21 +1,24 @@
 # #Preparing libs
-# pathMMU = "/home/simon/dbsOfflineUse/MusMusculus/"
-# 
+pathMMU = "/home/simon/dbsOfflineUse/MusMusculus/"
+
 # refseqGenes_gtf_ucsc_mm9 = createRObject_gtf( pathMMU, "refseqGenes_gtf_ucsc_mm9.gtf", type="ucsc" )
 # save(refseqGenes_gtf_ucsc_mm9, file=file.path( pathMMU, "refseqGenes_gtf_ucsc_mm9.rda" ) )
 # refseqGenes_gtf_ucsc_mm10 = createRObject_gtf( pathMMU, "refseqGenes_gtf_ucsc_mm10.gtf", type="ucsc" )
 # save(refseqGenes_gtf_ucsc_mm10, file=file.path( pathMMU, "refseqGenes_gtf_ucsc_mm10.rda" ) )
-# ensembl_gtf_v67_mm9 = createRObject_gtf( pathMMU, "ensembl_gtf_v67_mm9.gtf", type="ensembl" )
-# save(ensembl_gtf_v67_mm9, file=file.path( pathMMU, "ensembl_gtf_v67_mm9.rda" ) )
-# ensembl_gtf_v67_mm10 = createRObject_gtf( pathMMU, "ensembl_gtf_v67_mm10.gtf", type="ensembl" )
-# save(ensembl_gtf_v67_mm10, file=file.path( pathMMU, "ensembl_gtf_v67_mm10.rda" ) )
-# 
-# pathHSA = "/home/simon/dbsOfflineUse/HomoSapiens/"
-# 
+
+ensembl_gtf_v67_mm9 = createRObject_gtf( pathMMU, "ensembl_gtf_v67_mm9.gtf", type="ensembl" )
+save(ensembl_gtf_v67_mm9, file=file.path( pathMMU, "ensembl_gtf_v67_mm9.rda" ) )
+
+ensembl_gtf_v75_mm10 = createRObject_gtf( pathMMU, "ensembl_gtf_v75_mm10.gtf", type="ensembl" )
+save(ensembl_gtf_v75_mm10, file=file.path( pathMMU, "ensembl_gtf_v75_mm10.rda" ) )
+
+pathHSA = "/home/simon/dbsOfflineUse/HomoSapiens/"
+
 # refseqGenes_gtf_ucsc_hg19 = createRObject_gtf( pathHSA, "refseqGenes_gtf_ucsc_hg19.gtf" , type="ucsc")
 # save( refseqGenes_gtf_ucsc_hg19,  file=file.path( pathHSA, "refseqGenes_gtf_ucsc_hg19.rda" ))
-# ensembl_gtf_hg19 = createRObject_gtf( pathHSA, "ensembl_gtf_hg19.gtf", type="ensembl" )
-# save( ensembl_gtf_hg19,  file=file.path( pathHSA, "ensembl_gtf_hg19.rda" ))
+
+ensembl_gtf_hg19 = createRObject_gtf( pathHSA, "ensembl_gtf_hg19.gtf", type="ensembl" )
+save( ensembl_gtf_hg19,  file=file.path( pathHSA, "ensembl_gtf_hg19.rda" ))
 
 # 
 # sequence based annotation
