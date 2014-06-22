@@ -31,18 +31,36 @@ save( ensembl_gtf_hg19,  file=file.path( pathHSA, "ensembl_gtf_hg19.rda" ))
 # if no biotype is present then user must specify feature annotation or gene annotation
 
 library(rtracklayer)
-# library(Biostrings)
+library(Biostrings)
 # library(XML)
 library(sncRNAannotation)
 
 # 
 # candidatesOfInterest = "/media/Rstick/workspace/ncAnnotation/data/testInterestCand.bed"
 # candidatesOfInterest = import( candidatesOfInterest )
+# blastcmd = "blastn -query /media/schaffrr/Rstick/workspace/ncAnnotation/data/inSeq.fsa -db /media/schaffrr/Rstick/workspace/ncAnnotation/data/testFastadb -max_target_seqs=1 -num_threads=3 -outfmt \"5\" -word_size 11"
+
 
 candidateOfInterest = GRanges(seqnames="chr4", IRanges(155429005,155429094), strand="-")
+testInSeq = readDNAStringSet("/media/schaffrr/Rstick/workspace/ncAnnotation/data/inSeq.fsa")
 
-ensembl = new("GeneAnnotation", "ensemblAnnot", system.file("resources/ensembl/", package="sncRNAannotation"),"ensembl_gtf_v67_mm9.rda", candidateOfInterest)
-refseq = new("GeneAnnotation", "refseqAnnot",system.file("resources/ucsc/", package="sncRNAannotation"),"refseqGenes_gtf_ucsc_mm9.rda", candidateOfInterest)
+
+
+testNew = new("NcbiBlastAnnotation", "inTest","/media/schaffrr/Rstick/workspace/ncAnnotation/data/testFastadb", testInSeq, word_size=13)
+
+refseq = RefSeqUCSCAnnotation("refseqAnnot",system.file("resources/ucsc/", package="sncRNAannotation"),"refseqGenes_gtf_ucsc_mm9.rda", candidateOfInterest)
+ensembl = EnsemblAnnotation("ensemblAnnot", system.file("resources/ensembl/", package="sncRNAannotation"),"ensembl_gtf_v67_mm9.rda", candidateOfInterest)
+
+general = GRangesBasedAnnotation("refseqAnnot",system.file("resources/ucsc/", package="sncRNAannotation"),"refseqGenes_gtf_ucsc_mm9.rda", candidateOfInterest)
+
+getAnnotationByID(testNew, id = 1)
+
+
+
+
+
+
+
 
 
 
@@ -53,7 +71,6 @@ refseq = new("GeneAnnotation", "refseqAnnot",system.file("resources/ucsc/", pack
 otherAnnotationPath = "/media/Rstick/workspace/ncAnnotation/data/testAnnotation.bed"
 geneAnnotPath = "/media/Rstick/workspace/ncAnnotation/data/hg19.ensembl.rda"
 
-testInSeq = readDNAStringSet("/media/Rstick/workspace/ncAnnotation/data/inSeq.fsa")
 
 
 ensemblAnnot = new("GeneAnnotation", "ensemblAnnot",geneAnnotPath, candidatesOfInterest)

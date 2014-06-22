@@ -9,5 +9,8 @@ Depends:
 License: AFL
 LazyData: true
 Imports: Biostrings, rtracklayer, XML, RMySQL
-	
+Collate:
+    'RangedAnnotation.R'
+    'EnsemblAnnotation.R'
+    'RefSeqUCSCAnnotation.R'
 
