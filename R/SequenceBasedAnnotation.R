@@ -103,16 +103,18 @@ setMethod("executeAnnotation", "NcbiBlastAnnotation", function(object,pathToFile
   xmlDocListHit <- lapply( blastoutxml.iter, function(x){
     message("... parsing the XML output ...")
     x <- xmlDoc(x)
-    blastdfname <<- c(blastdfname,xmlToDataFrame(xpathSApply( x, "//Iteration" ))[,c("Iteration_query-ID")])  					
+    blastdfname <<- c(blastdfname,xmlToDataFrame(xpathSApply( x, "//Iteration" ))[,c("Iteration_query-ID")])					
+    queryLength <- xmlToDataFrame(xpathSApply( x, "//Iteration" ))[,c("Iteration_query-len")]
     blastdf <- xmlToDataFrame(xpathSApply(x, "//Hit"))
     
     if(dim( blastdf )[1] != 0){
       #Hit found -> else the empty data frame is returned
       blastdf <- blastdf[,c("Hit_num","Hit_id","Hit_def", "Hit_accession", "Hit_len")]
-      tmpblastdf <- xmlToDataFrame(xpathSApply(x, "//Hsp"))[,c("Hsp_num","Hsp_bit-score", "Hsp_score", "Hsp_evalue", "Hsp_query-from", "Hsp_query-to", "Hsp_hit-from", "Hsp_hit-to", "Hsp_gaps", "Hsp_align-len", "Hsp_qseq", "Hsp_hseq")]
+      tmpblastdf <- xmlToDataFrame(xpathSApply(x, "//Hsp"))[,c("Hsp_num","Hsp_bit-score", "Hsp_score", "Hsp_evalue", "Hsp_query-from", "Hsp_query-to", "Hsp_hit-from", "Hsp_hit-to", "Hsp_gaps", "Hsp_align-len","Hsp_identity", "Hsp_qseq", "Hsp_hseq")]
       #Currently delete the second annotation in one sequence -> automatically ranked by bit-score
       tmpblastdf <- tmpblastdf[tmpblastdf$Hsp_num == bestHit,]
       blastdf <- cbind( blastdf, tmpblastdf)
+      blastdf$queryLength = as.numeric(queryLength)
     }
     return( blastdf )
   } )

@@ -36,7 +36,7 @@ setMethod("initialize", "RangedAnnotation", function(.Object, annotName, pathToF
 			.Object@annotName <-annotName
 			.Object@annotationGR <- bedToInvestigate.sub
 			.Object@annotationMap <- annotationMap
-			
+			validObject(.Object)
 			return(.Object)
 			
 		})
@@ -156,7 +156,7 @@ setClass("GRangesBasedAnnotation", contains = "RangedAnnotation")
 #' @export
 #' @docType methods
 GRangesBasedAnnotation = function(  annotName, pathToFile,filename,  queryGR ){
-  new( "GRangesBasedAnnotation", annotName, pathToFile, queryGR )
+  new( "GRangesBasedAnnotation", annotName=annotName, pathToFile=pathToFile,filename=filename, queryGR=queryGR )
 }
 
 #' @param .object GRangesBasedAnnotation
@@ -187,55 +187,11 @@ setMethod("importRangedAnnotation", "GRangesBasedAnnotation", function(object, p
 }  )
 
 
-# Gene Annotation (subclass of Ranged Annotation) -------------------------
-
-#'@title GeneAnnotation extends RangedAnnotation
-#'@section Slots: 
-#'  \describe{
-#'    \item{\code{slot1}:}{annotName of the annotation \code{"character"}}
-#'    \item{\code{slot2}:}{annotationGR Overlap with annotation \code{"GRanges"}}
-#'    \item{\code{slot3}:}{annotationMap Map between annotation entry and input Entry \code{"Hits"}}
-#'  }
-#' @name GeneAnnotation-class
+#' Summarize annotation
 #' @export
-setClass("GeneAnnotation", contains = "RangedAnnotation")
-
-#' @param .object GeneAnnotation
-#' @return pathToFile Path to a file supported by rtracklayer/GRanges
-#' @rdname importRangedAnnotation-method
-setMethod("importRangedAnnotation", "GeneAnnotation", function(object, pathToFile, filename){
-  
-  geneDF = NULL
-  #Try to load r file or read the csv file
-  geneDF = tryCatch({
-    message("...loading library ...")
-    loadLibraryLocallyAs(name="geneDF", filename=file.path(pathToFile,filename) )
-  },warning = function(w){
-    message("Does not seem to be an RObject")
-  },error=function(e){
-    message(e)
-    return(null)
-  })
-  
-  if(is.null(geneDF) ){
-    geneDF = tryCatch({
-      message("...creating R object from gtf file ...")
-      return( createRObject_gtf( pathToGTF=pathToFile, filename=filename ) )
-    },warning = function(w){
-      message(w)
-    },error=function(e){
-      message("Cannot prepare gtf file")
-      message(e)
-      return(NULL)
-    })
-  }
-
-  if( is.null(geneDF) ){
-    stop("Cannot Read Gene File (should be eather in tab separated format or Robject!)")
-  }
-  return( geneDF )
-}  )
-
+#' @docType methods
+#' @rdname annotationSummary-method
+setGeneric("annotationSummary", function( object, ... ) { standardGeneric("annotationSummary") })
 
 
 #' Convert Ranges object to data frame
