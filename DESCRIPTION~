@@ -8,8 +8,5 @@ Depends:
     R (>= 3.0.2)
 License: AFL
 LazyData: true
-Imports:
-    Biostrings,
-    rtracklayer,
-    XML,
-    RMySQL
+Imports: Biostrings, rtracklayer, XML, RMySQL
+
