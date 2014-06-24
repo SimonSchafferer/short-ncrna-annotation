@@ -8,6 +8,7 @@
 #' @name RangedAnnotation-class
 #' @export
 setClass("RangedAnnotation", representation(annotName = "character", annotationGR = "GRanges", annotationMap="Hits", "VIRTUAL"))
+# @include GenericMethodsGlobal.R
 
 #' Initialisation method for Ranged Annotation class
 #'
@@ -43,14 +44,6 @@ setMethod("initialize", "RangedAnnotation", function(.Object, annotName, pathToF
 
 # Accessor Methods --------------------------------------------------------
 
-#' @param RangedAnnotation
-#' @return Slot annotationGR
-#' @rdname annotName-method
-#' @export
-setMethod("annotName",signature(object="RangedAnnotation"),function(object) {
-  slot(object, "annotName")
-})
-
 #' Accessor method annotationGR
 #' 
 #' @seealso \code{\link{GRanges}}
@@ -82,6 +75,20 @@ setGeneric("annotationMap", function(object) { standardGeneric("annotationMap") 
 setMethod("annotationMap",signature(object="RangedAnnotation"),function(object) {
 			slot(object, "annotationMap")
 		})
+
+#' Accessor method annotName
+#' @export
+#' @docType methods
+#' @rdname annotName-method
+setGeneric("annotName", function(object) { standardGeneric("annotName") })
+#' @param RangedAnnotation
+#' @return Slot annotationGR
+#' @rdname annotName-method
+#' @export
+setMethod("annotName",signature(object="RangedAnnotation"),function(object) {
+  slot(object, "annotName")
+})
+
 
 #' Constructor method for Ranged Annotation class
 #'
@@ -134,214 +141,6 @@ setMethod("getAnnotationByID", signature( "RangedAnnotation"), function(object, 
 			return(object)
 		})
 
-
-# GRangesBasedAnnotation class (subclass of RangedAnnotation) --------------------
-#'@title GRangesBasedAnnotation extends RangedAnnotation
-#'@section Slots: 
-#'  \describe{
-#'    \item{\code{slot1}:}{annotName of the annotation \code{"character"}}
-#'    \item{\code{slot2}:}{annotationGR Overlap with annotation \code{"GRanges"}}
-#'    \item{\code{slot3}:}{annotationMap Map between annotation entry and input Entry \code{"Hits"}}
-#'  }
-#' @name GRangesBasedAnnotation-class
-#' @export
-setClass("GRangesBasedAnnotation", contains = "RangedAnnotation")
-
-#' Constructor method for Ranged Annotation class
-#'
-#' @param .Object EnsemblAnnotation, RefSeqGUCSCAnnoation, GRangesBasedAnnotation
-#' @param annotName Name of the annotation
-#' @param pathToFile file path to either an RObject or specific file type see  \code{"rtracklayer"} of the subject annotation
-#' @param queryGR GRanges object of candidates one wants to annotate
-#' @export
-#' @docType methods
-GRangesBasedAnnotation = function(  annotName, pathToFile,filename,  queryGR ){
-  new( "GRangesBasedAnnotation", annotName=annotName, pathToFile=pathToFile,filename=filename, queryGR=queryGR )
-}
-
-#' @param .object GRangesBasedAnnotation
-#' @return pathToFile Path to a file supported by rtracklayer/GRanges
-#' @rdname importRangedAnnotation-method
-setMethod("importRangedAnnotation", "GRangesBasedAnnotation", function(object, pathToFile, filename){
-  
-  otherAnnot = tryCatch({
-    message("...loading library ...")
-    loadLibraryLocallyAs(name="otherAnnot", filename=file.path( pathToFile, filename) )
-  },warning = function(w){
-    message(paste("Probably not an RObject file -> trying to import range based file (bed, gtf, ...)"))
-    message(w)
-    otherAnnot = rtracklayer::import( file.path( pathToFile, filename), asRangedData = FALSE ) 
-    return(otherAnnot)
-  },error=function(e){
-    message(paste("Probably not an RObject file -> trying to import range based file (bed, gtf, ...)"))
-    message(e)
-    otherAnnot = rtracklayer::import( file.path( pathToFile, filename), asRangedData = FALSE )
-    return(otherAnnot)
-  })
-  
-  if( !is(otherAnnot,"GRanges") ){
-    stop("Probably not a GRanges object")
-  }
-  
-  return(otherAnnot)
-}  )
-
-
-#'@title EnsemblAnnotation extends RangedAnnotation
-#'@section Slots: 
-#'  \describe{
-#'    \item{\code{slot1}:}{annotName of the annotation \code{"character"}}
-#'    \item{\code{slot2}:}{annotationGR Overlap with annotation \code{"GRanges"}}
-#'    \item{\code{slot3}:}{annotationMap Map between annotation entry and input Entry \code{"Hits"}}
-#'  }
-#' @name EnsemblAnnotation-class
-#' @export
-setClass("EnsemblAnnotation", contains = "RangedAnnotation")
-
-#' Constructor method for Ranged Annotation class
-#'
-#' @param .Object GeneAnnotation, GRangesBasedAnnotation
-#' @param annotName Name of the annotation
-#' @param pathToFile file path to either an RObject or specific file type see  \code{"rtracklayer"} of the subject annotation
-#' @param queryGR GRanges object of candidates one wants to annotate
-#' @export
-#' @docType methods
-EnsemblAnnotation = function(  annotName, pathToFile, filename, queryGR ){
-  new( "EnsemblAnnotation", annotName=annotName, pathToFile=pathToFile, filename, queryGR=queryGR )
-}
-
-checkValidityEnsemblAnnotation=function(object) {   
-  agr = annotationGR(object)
-  
-  if( !all(c("type","gene_id","transcript_id", "gene_biotype") %in% colnames(elementMetadata(agr))) ){
-    return( "\nEnsembl annotation has to contain a gene_id, transcript_id and gene_biotype column!\n
-            gene_id and transcript_id must contain Ensembl Identifier (ENS...)\n
-            gene_biotype must contain biotypes e.g. protein_coding, miRNA\n
-            type must contain intron, exon, etc." )
-  } else{
-    return(TRUE)
-  }
-}
-
-#Check Validity
-setValidity("EnsemblAnnotation", checkValidityEnsemblAnnotation)
-
-#' importRangedAnnotation
-#' @param .object EnsemblAnnotation
-#' @param pathToFile path to a gtf file or .rda file
-#' @param filename
-#' @return Ensembl annotation object rtracklayer/GRanges
-#' @rdname importRangedAnnotation-method
-setMethod("importRangedAnnotation", "EnsemblAnnotation", function(object, pathToFile, filename){
-  
-  geneDF = NULL
-  #Try to load r file or read the csv file
-  geneDF = tryCatch({
-    message("...loading library ...")
-    loadLibraryLocallyAs(name="geneDF", filename=file.path(pathToFile,filename) )
-  },warning = function(w){
-    message("Does not seem to be an RObject")
-  },error=function(e){
-    message(e)
-    return(null)
-  })
-  
-  if(is.null(geneDF) ){
-    geneDF = tryCatch({
-      message("...creating R object from gtf file ...")
-      return( createRObject_gtf( pathToGTF=pathToFile, filename=filename, type = "ENSEMBL" ) )
-    },warning = function(w){
-      message(w)
-    },error=function(e){
-      message("Cannot prepare gtf file")
-      message(e)
-      return(NULL)
-    })
-  }
-  
-  if( is.null(geneDF) ){
-    stop("Cannot Read Gene File (should be eather in tab separated format or Robject!)")
-  }
-  return( geneDF )
-}  )
-
-
-# RefSeqUCSCAnnotation Gene Annotation (subclass of Ranged Annotation) -------------------------
-#'@title RefSeqUCSCAnnotation extends RangedAnnotation
-#'@section Slots: 
-#'  \describe{
-#'    \item{\code{slot1}:}{annotName of the annotation \code{"character"}}
-#'    \item{\code{slot2}:}{annotationGR Overlap with annotation \code{"GRanges"}}
-#'    \item{\code{slot3}:}{annotationMap Map between annotation entry and input Entry \code{"Hits"}}
-#'  }
-#' @name RefSeqUCSCAnnotation-class
-#' @export
-setClass("RefSeqUCSCAnnotation", contains = "RangedAnnotation")
-
-#' Constructor method for RefSeqUCSCAnnotation Annotation class
-#'
-#' @param .Object RefSeqUCSCAnnotation, GRangesBasedAnnotation
-#' @param annotName Name of the annotation
-#' @param pathToFile file path to either an RObject or specific file type see  \code{"rtracklayer"} of the subject annotation
-#' @param queryGR GRanges object of candidates one wants to annotate
-#' @export
-#' @docType methods
-RefSeqUCSCAnnotation = function(  annotName, pathToFile,filename,  queryGR ){
-  new( "RefSeqUCSCAnnotation", annotName=annotName, pathToFile=pathToFile,filename=filename, queryGR=queryGR )
-}
-
-checkValidityRefSeqUCSCAnnotation=function(object) {   
-  agr = annotationGR(object)
-  
-  if( !all(c("gene_id","transcript_id") %in% colnames(elementMetadata(agr))) ){
-    return( "RefSeqUCSCAnnotation annotation has to contain a gene_id, transcript_id column!\n
-            gene_id and transcript_id must contain RefSeq Identifier (NR_ or NM_ etc.)" )
-  } else{
-    return(TRUE)
-  }
-}
-setValidity("RefSeqUCSCAnnotation", checkValidityRefSeqUCSCAnnotation)
-
-#' @param .object RefSeqUCSCAnnotation
-#' @return pathToFile Path to a file supported by rtracklayer/GRanges
-#' @rdname importRangedAnnotation-method
-setMethod("importRangedAnnotation", "RefSeqUCSCAnnotation", function(object, pathToFile, filename){
-  
-  geneDF = NULL
-  #Try to load r file or read the csv file
-  geneDF = tryCatch({
-    message("...loading library ...")
-    loadLibraryLocallyAs(name="geneDF", filename=file.path(pathToFile,filename) )
-  },warning = function(w){
-    message("Does not seem to be an RObject")
-  },error=function(e){
-    message(e)
-    return(null)
-  })
-  
-  if(is.null(geneDF) ){
-    geneDF = tryCatch({
-      message("...creating R object from gtf file ...")
-      return( createRObject_gtf( pathToGTF=pathToFile, filename=filename, type = "UCSC" ) )
-    },warning = function(w){
-      message(w)
-    },error=function(e){
-      message("Cannot prepare gtf file")
-      message(e)
-      return(NULL)
-    })
-  }
-  
-  if( is.null(geneDF) ){
-    stop("Cannot Read Gene File (should be eather in tab separated format or Robject!)")
-  }
-  return( geneDF )
-}  )
-
-
-
-
-
 # # ' Summarize annotation
 # # ' @export
 # # ' @docType methods
@@ -362,15 +161,6 @@ setMethod("convertRangesToDF", signature("RangedAnnotation"), function(object, .
   stop("no convertRangesToDF method for this class")
 })
 
-#' @param GRangesBasedAnnotation
-#' @return data.frame
-#' @rdname convertRangesToDF-method
-#' @export
-setMethod("convertRangesToDF", signature( "GRangesBasedAnnotation"), function(object,... ){
-  gro = annotationGR(object)
-  return(as.data.frame(gro))
-})
-
 #' @param GRanges
 #' @return data.frame
 #' @rdname convertRangesToDF-method
@@ -379,23 +169,6 @@ setMethod("convertRangesToDF", signature( "GRanges"), function(object,... ){
   return(as.data.frame(object))
 })
 
-#' @param RefSeqUCSCAnnotation
-#' @return data.frame
-#' @rdname convertRangesToDF-method
-#' @export
-setMethod("convertRangesToDF", signature( "RefSeqUCSCAnnotation"), function(object,... ){
-  gro = annotationGR(object)
-  return(as.data.frame(gro))
-})
-
-#' @param EnsemblAnnotation
-#' @return data.frame
-#' @rdname convertRangesToDF-method
-#' @export
-setMethod("convertRangesToDF", signature( "EnsemblAnnotation"), function(object,... ){
-  gro = annotationGR(object)
-  return(as.data.frame(gro))
-})
 
 
 

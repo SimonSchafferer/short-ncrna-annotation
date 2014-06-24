@@ -4,7 +4,7 @@
 \alias{EnsemblAnnotation}
 \title{Constructor method for Ranged Annotation class}
 \usage{
-EnsemblAnnotation(annotName, pathToFile, queryGR)
+EnsemblAnnotation(annotName, pathToFile, filename, queryGR)
 }
 \arguments{
 \item{.Object}{GeneAnnotation, GRangesBasedAnnotation}
