@@ -22,25 +22,9 @@ convertRangesToDF(object, ...)
 \S4method{convertRangesToDF}{RefSeqUCSCAnnotation}(object, ...)
 }
 \arguments{
-\item{EnsemblAnnotation}{}
-
-\item{GRangesBasedAnnotation}{}
-
 \item{RangedAnnotation}{}
-
-\item{GRanges}{}
-
-\item{RefSeqUCSCAnnotation}{}
 }
 \value{
-data.frame
-
-data.frame
-
-data.frame
-
-data.frame
-
 data.frame
 }
 \description{

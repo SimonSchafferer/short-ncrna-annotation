@@ -7,13 +7,13 @@
 EnsemblAnnotation(annotName, pathToFile, filename, queryGR)
 }
 \arguments{
-\item{.Object}{GeneAnnotation, GRangesBasedAnnotation}
-
 \item{annotName}{Name of the annotation}
 
 \item{pathToFile}{file path to either an RObject or specific file type see  \code{"rtracklayer"} of the subject annotation}
 
 \item{queryGR}{GRanges object of candidates one wants to annotate}
+
+\item{.Object}{GeneAnnotation, GRangesBasedAnnotation}
 }
 \description{
 Constructor method for Ranged Annotation class

@@ -15,8 +15,8 @@ Imports:
     RMySQL
 Collate:
     'RangedAnnotation.R'
-    'EnsemblAnnotation.R'
     'GRangesBasedAnnotation.R'
+    'EnsemblAnnotation.R'
     'ModifyUCSCEnsemblGTF.R'
     'RefSeqUCSCAnnotation.R'
     'SequenceBasedAnnotation.R'

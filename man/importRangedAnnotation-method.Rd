@@ -5,40 +5,27 @@
 \alias{importRangedAnnotation,EnsemblAnnotation-method}
 \alias{importRangedAnnotation,GRangesBasedAnnotation-method}
 \alias{importRangedAnnotation,RefSeqUCSCAnnotation-method}
-\title{importRangedAnnotation}
+\title{Import Range dAnnotation}
 \usage{
 \S4method{importRangedAnnotation}{EnsemblAnnotation}(object, pathToFile,
-  filename)
+  filename, ...)
 
 \S4method{importRangedAnnotation}{GRangesBasedAnnotation}(object, pathToFile,
-  filename)
+  filename, ...)
 
 importRangedAnnotation(object, pathToFile, filename, ...)
 
 \S4method{importRangedAnnotation}{RefSeqUCSCAnnotation}(object, pathToFile,
-  filename)
+  filename, ...)
 }
 \arguments{
-\item{.object}{EnsemblAnnotation}
+\item{pathToFile}{path to a gtf or rda file}
 
-\item{pathToFile}{path to a gtf file or .rda file}
+\item{filename}{name of the gtf/rda file}
 
-\item{filename}{}
-
-\item{.object}{GRangesBasedAnnotation}
-
-\item{.object}{RefSeqUCSCAnnotation}
-}
-\value{
-Ensembl annotation object rtracklayer/GRanges
-
-pathToFile Path to a file supported by rtracklayer/GRanges
-
-pathToFile Path to a file supported by rtracklayer/GRanges
+\item{Object}{}
 }
 \description{
-importRangedAnnotation
-
-Import RangedAnnotation
+Import Range dAnnotation
 }
 

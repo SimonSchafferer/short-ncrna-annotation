@@ -13,7 +13,7 @@ getAnnotationByID(object, id, ...)
 \item{RangedAnnotation}{}
 }
 \value{
-RangedAnnotation
+RangedAnnotation object
 }
 \description{
 Fetch a specific annoation by ID

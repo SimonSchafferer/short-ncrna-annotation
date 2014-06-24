@@ -12,6 +12,7 @@ GRangesBasedAnnotation extends RangedAnnotation
    \item{\code{slot1}:}{annotName of the annotation \code{"character"}}
    \item{\code{slot2}:}{annotationGR Overlap with annotation \code{"GRanges"}}
    \item{\code{slot3}:}{annotationMap Map between annotation entry and input Entry \code{"Hits"}}
+   \item{\code{slot4}:}{inputGR Input of user that got annotated \code{"GRanges"}}
  }
 }
 

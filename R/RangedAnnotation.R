@@ -1,16 +1,19 @@
-#'@title Ranged Annotation Virtual Class, currently superclass of: EnsemblAnnotation, , RangesAnnotation
-#'@section Slots: 
+#' @title Ranged Annotation Virtual Class, currently superclass of: EnsemblAnnotation, , RangesAnnotation
+#' @section Slots: 
 #'  \describe{
 #'    \item{\code{slot1}:}{annotName of the annotation \code{"character"}}
 #'    \item{\code{slot2}:}{annotationGR Overlap with annotation \code{"GRanges"}}
 #'    \item{\code{slot3}:}{annotationMap Map between annotation entry and input Entry \code{"Hits"}}
+#'    \item{\code{slot4}:}{inputGR Input of user that got annotated \code{"GRanges"}}
 #'  }
-#' @name RangedAnnotation-class
+#' @rdname RangedAnnotation-class
 #' @export
-setClass("RangedAnnotation", representation(annotName = "character", annotationGR = "GRanges", annotationMap="Hits", "VIRTUAL"))
-# @include GenericMethodsGlobal.R
+setClass(Class="RangedAnnotation", representation(annotName = "character", 
+                                            annotationGR = "GRanges", 
+                                            annotationMap="Hits", 
+                                            inputGR="GRanges", "VIRTUAL") )
 
-#' Initialisation method for Ranged Annotation class
+#' @title Initialisation method for Ranged Annotation class
 #'
 #' @param .Object EnsemblAnnotation, RefSeqUCSCAnnotation, GRangesBasedAnnotation
 #' @param annotName Name of the annotation
@@ -37,6 +40,7 @@ setMethod("initialize", "RangedAnnotation", function(.Object, annotName, pathToF
 			.Object@annotName <-annotName
 			.Object@annotationGR <- bedToInvestigate.sub
 			.Object@annotationMap <- annotationMap
+      .Object@inputGR <- queryGR
 			validObject(.Object)
 			return(.Object)
 			
@@ -44,53 +48,65 @@ setMethod("initialize", "RangedAnnotation", function(.Object, annotName, pathToF
 
 # Accessor Methods --------------------------------------------------------
 
-#' Accessor method annotationGR
+#' @title Accessor method annotationGR
 #' 
 #' @seealso \code{\link{GRanges}}
-#' 
+#' @param RangedAnnotation
+#' @return Slot annotationGR
 #' @export
 #' @docType methods
 #' @rdname annotationGR-method
 setGeneric("annotationGR", function(object) { standardGeneric("annotationGR") })
-#' @param RangedAnnotation
-#' @return Slot annotationGR
+
 #' @rdname annotationGR-method
-#' @export
 setMethod("annotationGR",signature(object="RangedAnnotation"),function(object) {
 			slot(object, "annotationGR")
 		})
 
-#' Accessor method annotationMap
+#' @title Accessor method annotationMap
 #' 
 #' @seealso \code{\link{Hits}}
-#' 
+#' @param RangedAnnotation
+#' @return Slot annotationGR
 #' @export
 #' @docType methods
 #' @rdname annotationMap-method
 setGeneric("annotationMap", function(object) { standardGeneric("annotationMap") })
-#' @param RangedAnnotation
-#' @return Slot annotationGR
+
 #' @rdname annotationMap-method
-#' @export
 setMethod("annotationMap",signature(object="RangedAnnotation"),function(object) {
 			slot(object, "annotationMap")
 		})
 
-#' Accessor method annotName
+#' @title Accessor method annotName
 #' @export
 #' @docType methods
-#' @rdname annotName-method
-setGeneric("annotName", function(object) { standardGeneric("annotName") })
 #' @param RangedAnnotation
 #' @return Slot annotationGR
 #' @rdname annotName-method
-#' @export
+setGeneric("annotName", function(object) { standardGeneric("annotName") })
+
+#' @rdname annotName-method
 setMethod("annotName",signature(object="RangedAnnotation"),function(object) {
   slot(object, "annotName")
 })
 
+#' @title Accessor method inputGR
+#' 
+#' @seealso \code{\link{GRanges}}
+#' @param RangedAnnotation
+#' @return Slot inputGR
+#' @export
+#' @docType methods
+#' @rdname inputGR-method
+setGeneric("inputGR", function(object) { standardGeneric("inputGR") })
 
-#' Constructor method for Ranged Annotation class
+#' @rdname inputGR-method
+setMethod("inputGR",signature(object="RangedAnnotation"),function(object) {
+  slot(object, "inputGR")
+})
+
+#' @title Constructor method for Ranged Annotation class
 #'
 #' @param .Object EnsemblAnnotation, RefSeqUCSCAnnotation, GRangesBasedAnnotation
 #' @param annotName Name of the annotation
@@ -102,23 +118,29 @@ RangedAnnotation = function( annotName, pathToFile, filename, queryGR, ...  ){
   new( "RangedAnnotation", annotName, pathToFile, filename, queryGR, ... )
 }
 
-# Other RangedAnnotation Methods ------------------------------------------
+# ----------------------------------- Other RangedAnnotation Methods ------------------------------------------
 
-#' Import RangedAnnotation
-#' @docType methods
+#' @title Import Range dAnnotation
+#' 
+#' @param Object
+#' @param pathToFile path to a gtf or rda file
+#' @param filename name of the gtf/rda file
 #' @rdname importRangedAnnotation-method
-#' @export
-setGeneric("importRangedAnnotation", function( object, pathToFile, filename, ... ) { standardGeneric("importRangedAnnotation") })
-
-#' Fetch a specific annoation by ID
-#' @export
 #' @docType methods
-#' @rdname getAnnotationByID-method
-setGeneric("getAnnotationByID", function( object, id, ... ) { standardGeneric("getAnnotationByID") })
+#' @export
+setGeneric("importRangedAnnotation", function( object, pathToFile, filename, ... ) standardGeneric("importRangedAnnotation"))
+
+#' @title Fetch a specific annoation by ID
+#' 
+#' @docType methods
 #' @param RangedAnnotation
-#' @return RangedAnnotation
+#' @return RangedAnnotation object
 #' @rdname getAnnotationByID-method
 #' @export
+setGeneric("getAnnotationByID", function( object, id, ... ) { standardGeneric("getAnnotationByID") })
+
+
+#' @rdname getAnnotationByID-method
 setMethod("getAnnotationByID", signature( "RangedAnnotation"), function(object, id){
 			
 			annotationMap <- annotationMap(object)
@@ -141,30 +163,31 @@ setMethod("getAnnotationByID", signature( "RangedAnnotation"), function(object, 
 			return(object)
 		})
 
-# # ' Summarize annotation
-# # ' @export
-# # ' @docType methods
-# # ' @rdname annotationSummary-method
-# setGeneric("annotationSummary", function( object, ... ) { standardGeneric("annotationSummary") })
-
-#' Convert Ranges object to data frame
+#' @title Summarize annotation
+#' 
+#' @param RangedAnnotation class
+#' @docType methods
+#' @rdname annotationSummary-method
+#' @return Annotation data.frames as list
 #' @export
+setGeneric("annotationSummary", function( object, ... ) { standardGeneric("annotationSummary") })
+
+
+#' @title Convert Ranges object to data frame
+#' 
+#' @export
+#' @param RangedAnnotation
 #' @docType methods
 #' @rdname convertRangesToDF-method
+#' @return data.frame
 setGeneric("convertRangesToDF", function( object, ... ) { standardGeneric("convertRangesToDF") })
 
-#' @param RangedAnnotation
-#' @return data.frame
 #' @rdname convertRangesToDF-method
-#' @export
 setMethod("convertRangesToDF", signature("RangedAnnotation"), function(object, ...){
   stop("no convertRangesToDF method for this class")
 })
 
-#' @param GRanges
-#' @return data.frame
 #' @rdname convertRangesToDF-method
-#' @export
 setMethod("convertRangesToDF", signature( "GRanges"), function(object,... ){
   return(as.data.frame(object))
 })

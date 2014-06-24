@@ -1,9 +1,11 @@
-#'Loads an R object by a given name into the globalEnvironment
-#'@param name Object name one wants to define
-#'@param filename Path to file and name
-#'@param envir environment were the object should be loaded to
-#'@return TRUE
-#'@export
+#' @title 'Loads an R object by a given name into the globalEnvironment
+#'
+#' @param name Object name one wants to define
+#' @param filename Path to file and name
+#' @param envir environment were the object should be loaded to
+#' @return TRUE
+#' @docType methods
+#' @export
 loadLibraryGloballyAs = function( name, filename ){
   envir=globalenv()
   nameTmp = load(filename)  
@@ -12,11 +14,14 @@ loadLibraryGloballyAs = function( name, filename ){
   message(paste0(nameTmp, " was assigned to variable ", substitute(name)))
   return(TRUE)
 }
-#'Loads an R object by a given name and returns it
+
+#'@title Loads an R object by a given name and returns it
+#'
 #'@param name Object name one wants to define
 #'@param filename Path to file and name
 #'@param envir environment were the object should be loaded to
 #'@return TRUE
+#'@docType methods
 #'@export
 loadLibraryLocallyAs = function( name, filename ){
   envir=environment()
@@ -25,3 +30,24 @@ loadLibraryLocallyAs = function( name, filename ){
   eval(parse(text=( command )))
   return(eval(parse(text=( name ))))
 }
+
+#'@title Calculates the coverage of two GRanges objects
+#'
+#'@param subject GRanges object
+#'@param query Granges object
+#'@return data.frame coverage 
+#'@docType methods
+#'@export
+calculateAlignmentCoverageTwoGRanges = function( qh, sh ) {
+  coverageqh = ifelse( start(qh) >= start(sh) & end(qh) <= end(sh), TRUE, FALSE ) #query is vollständig in subject enthalten
+  overlapping = ifelse( start(qh) < start(sh) & end(qh) > end(sh), (end(sh)-start(sh))+1, (end(qh)-start(sh))+1 ) #subject ist vollständig in query enthalten und query steht am linken ende von subject über
+  coveragesh = ifelse( start(qh) > start(sh) & end(qh) > end(sh), TRUE, FALSE ) #query steht am rechten ende von subject über
+  overlapping[coverageqh] = width(qh[coverageqh])  #kompletter overlab von query in subject
+  overlapping[coveragesh] = end(sh[coveragesh]) - start(qh[coveragesh]) + 1 #rechten ende von subject über    
+  coverageOverqh = round( overlapping/width(qh), digits = 2) #alignment coverage von query
+  coverageOversh = round( overlapping/width(sh), digits = 2)#alignment coverage von subject  
+  #return the alignment coverage of each Granges object to each object always taking the longer covering one (relative to length) as reference
+  return(data.frame("qh"=coverageOverqh, "sh"=coverageOversh))
+}
+
+

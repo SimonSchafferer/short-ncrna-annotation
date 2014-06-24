@@ -7,12 +7,14 @@
 #'    \item{\code{slot1}:}{annotName of the annotation \code{"character"}}
 #'    \item{\code{slot2}:}{annotationGR Overlap with annotation \code{"GRanges"}}
 #'    \item{\code{slot3}:}{annotationMap Map between annotation entry and input Entry \code{"Hits"}}
+#'    \item{\code{slot4}:}{inputGR Input of user that got annotated \code{"GRanges"}}
 #'  }
-#' @name GRangesBasedAnnotation-class
+#' @rdname GRangesBasedAnnotation-class
+#' @docType class
 #' @export
 setClass("GRangesBasedAnnotation", contains = "RangedAnnotation")
 
-#' Constructor method for Ranged Annotation class
+#' @title Constructor method for Ranged Annotation class
 #'
 #' @param .Object EnsemblAnnotation, RefSeqGUCSCAnnoation, GRangesBasedAnnotation
 #' @param annotName Name of the annotation
@@ -24,10 +26,8 @@ GRangesBasedAnnotation = function(  annotName, pathToFile,filename,  queryGR ){
   new( "GRangesBasedAnnotation", annotName=annotName, pathToFile=pathToFile,filename=filename, queryGR=queryGR )
 }
 
-#' @param .object GRangesBasedAnnotation
-#' @return pathToFile Path to a file supported by rtracklayer/GRanges
 #' @rdname importRangedAnnotation-method
-setMethod("importRangedAnnotation", "GRangesBasedAnnotation", function(object, pathToFile, filename){
+setMethod("importRangedAnnotation", signature(object="GRangesBasedAnnotation"), function(object, pathToFile, filename, ...){
   
   otherAnnot = tryCatch({
     message("...loading library ...")
@@ -51,11 +51,17 @@ setMethod("importRangedAnnotation", "GRangesBasedAnnotation", function(object, p
   return(otherAnnot)
 }  )
 
-#' @param GRangesBasedAnnotation
-#' @return data.frame
+
 #' @rdname convertRangesToDF-method
-#' @export
 setMethod("convertRangesToDF", signature( "GRangesBasedAnnotation"), function(object,... ){
   gro = annotationGR(object)
   return(as.data.frame(gro))
 })
+
+
+#' @rdname annotationSummary-method
+setMethod("annotationSummary", signature("GRangesBasedAnnotation"), function(object,... ){
+  gro = annotationGR(object)
+  return(as.data.frame(gro))
+})
+

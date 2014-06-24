@@ -1,4 +1,4 @@
-#' @include RangedAnnotation.R
+#' @include GRangesBasedAnnotation.R
 
 #'@title EnsemblAnnotation extends RangedAnnotation
 #'@section Slots: 
@@ -6,13 +6,14 @@
 #'    \item{\code{slot1}:}{annotName of the annotation \code{"character"}}
 #'    \item{\code{slot2}:}{annotationGR Overlap with annotation \code{"GRanges"}}
 #'    \item{\code{slot3}:}{annotationMap Map between annotation entry and input Entry \code{"Hits"}}
+#'    \item{\code{slot4}:}{inputGR Input of user that got annotated \code{"GRanges"}}
 #'  }
-#' @name EnsemblAnnotation-class
+#' @rdname EnsemblAnnotation-class
+#' @aliases EnsemblAnnotation EnsemblAnnotation-class
 #' @export
 setClass("EnsemblAnnotation", contains = "RangedAnnotation")
 
-
-#' Constructor method for Ranged Annotation class
+#' @title Constructor method for Ranged Annotation class
 #'
 #' @param .Object GeneAnnotation, GRangesBasedAnnotation
 #' @param annotName Name of the annotation
@@ -38,13 +39,8 @@ checkValidityEnsemblAnnotation=function(object) {
 }
 setValidity("EnsemblAnnotation", checkValidityEnsemblAnnotation)
 
-#' importRangedAnnotation
-#' @param .object EnsemblAnnotation
-#' @param pathToFile path to a gtf file or .rda file
-#' @param filename
-#' @return Ensembl annotation object rtracklayer/GRanges
 #' @rdname importRangedAnnotation-method
-setMethod("importRangedAnnotation", "EnsemblAnnotation", function(object, pathToFile, filename){
+setMethod("importRangedAnnotation", signature(object="EnsemblAnnotation"), function(object, pathToFile, filename, ...){
   
   geneDF = NULL
   #Try to load r file or read the csv file
@@ -78,11 +74,28 @@ setMethod("importRangedAnnotation", "EnsemblAnnotation", function(object, pathTo
 }  )
 
 
-#' @param EnsemblAnnotation
-#' @return data.frame
 #' @rdname convertRangesToDF-method
-#' @export
 setMethod("convertRangesToDF", signature( "EnsemblAnnotation"), function(object,... ){
   gro = annotationGR(object)
   return(as.data.frame(gro))
 })
+
+#' @rdname annotationSummary-method
+setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, ... ){
+  gro = annotationGR(object)
+  mapgro = annotationMap(object)
+  validObject(ensembl)
+  
+#   calculateAlignmentCoverageTwoGRanges
+  
+  
+#   
+#   #separating the protein-coding gene annotation from the feature annotation
+#   protein_codingIdx = which( gro$source == "protein_coding"  )
+#   
+  
+  
+  
+  return(as.data.frame(gro))
+})
+

@@ -6,14 +6,15 @@
 #'    \item{\code{slot1}:}{annotName of the annotation \code{"character"}}
 #'    \item{\code{slot2}:}{annotationGR Overlap with annotation \code{"GRanges"}}
 #'    \item{\code{slot3}:}{annotationMap Map between annotation entry and input Entry \code{"Hits"}}
+#'    \item{\code{slot4}:}{inputGR Input of user that got annotated \code{"GRanges"}}
 #'  }
-#' @name RefSeqUCSCAnnotation-class
+#' @rdname RefSeqUCSCAnnotation-class
+#' @docType methods
 #' @export
 setClass("RefSeqUCSCAnnotation", contains = "RangedAnnotation")
-# @include RangedAnnotation.R
 
 
-#' Constructor method for RefSeqUCSCAnnotation Annotation class
+#' @title Constructor method for RefSeqUCSCAnnotation Annotation class
 #'
 #' @param .Object RefSeqUCSCAnnotation, GRangesBasedAnnotation
 #' @param annotName Name of the annotation
@@ -37,10 +38,8 @@ checkValidityRefSeqUCSCAnnotation=function(object) {
 }
 setValidity("RefSeqUCSCAnnotation", checkValidityRefSeqUCSCAnnotation)
 
-#' @param .object RefSeqUCSCAnnotation
-#' @return pathToFile Path to a file supported by rtracklayer/GRanges
 #' @rdname importRangedAnnotation-method
-setMethod("importRangedAnnotation", "RefSeqUCSCAnnotation", function(object, pathToFile, filename){
+setMethod("importRangedAnnotation",  signature(object="RefSeqUCSCAnnotation"), function(object, pathToFile, filename, ... ){
   
   geneDF = NULL
   #Try to load r file or read the csv file
@@ -73,11 +72,15 @@ setMethod("importRangedAnnotation", "RefSeqUCSCAnnotation", function(object, pat
   return( geneDF )
 }  )
 
-#' @param RefSeqUCSCAnnotation
-#' @return data.frame
+
 #' @rdname convertRangesToDF-method
-#' @export
 setMethod("convertRangesToDF", signature( "RefSeqUCSCAnnotation"), function(object,... ){
+  gro = annotationGR(object)
+  return(as.data.frame(gro))
+})
+
+#' @rdname annotationSummary-method
+setMethod("annotationSummary", signature("RefSeqUCSCAnnotation"), function(object,... ){
   gro = annotationGR(object)
   return(as.data.frame(gro))
 })
