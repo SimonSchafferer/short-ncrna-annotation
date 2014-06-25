@@ -90,17 +90,28 @@ setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, 
   
   tmpIngr = ingr[queryHits(mapgro)]
   tmpGro = gro[subjectHits(mapgro)]
-
-   calculateAlignmentCoverageTwoGRanges( qh=tmpIngr, sh=tmpGro )
-  
-  
-#   
+ 
 #   #separating the protein-coding gene annotation from the feature annotation
 #   protein_codingIdx = which( gro$source == "protein_coding"  )
-#   
+
+  protein_codingIdx = which(tmpGro$gene_biotype == "protein_coding")
+  feature_annotationIdx = which(tmpGro$gene_biotype != "protein_coding")
   
+  protein_coding_map = mapgro[protein_codingIdx]
+  feature_annotation_map = mapgro[feature_annotationIdx]
   
+  protein_codingAnnotGR = tmpGro[protein_codingIdx]
+  feature_AnnotGR = tmpGro[feature_annotationIdx]
   
+   protein_codingInGR = ingr[queryHits(protein_coding_map)]
+   featureInGR = ingr[queryHits(feature_annotation_map)]
+  
+   alignmentCoverage_protCodDF = calculateAlignmentCoverageTwoGRanges( qh=protein_codingInGR, sh=protein_codingAnnotGR )
+   alignmentCoverage_featureDF = calculateAlignmentCoverageTwoGRanges( qh=featureInGR, sh=feature_AnnotGR )
+
+   idx = 1:length(ingr)
+
+
   return(as.data.frame(gro))
 })
 

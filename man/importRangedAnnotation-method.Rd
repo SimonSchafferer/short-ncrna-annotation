@@ -21,11 +21,11 @@ importRangedAnnotation(object, pathToFile, filename, ...)
   filename, ...)
 }
 \arguments{
-\item{Object}{}
-
 \item{pathToFile}{path to a gtf or rda file}
 
 \item{filename}{name of the gtf/rda file}
+
+\item{Object}{}
 }
 \description{
 Import Range dAnnotation

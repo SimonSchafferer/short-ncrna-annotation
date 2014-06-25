@@ -41,7 +41,7 @@ library(sncRNAannotation)
 # blastcmd = "blastn -query /media/schaffrr/Rstick/workspace/ncAnnotation/data/inSeq.fsa -db /media/schaffrr/Rstick/workspace/ncAnnotation/data/testFastadb -max_target_seqs=1 -num_threads=3 -outfmt \"5\" -word_size 11"
 
 
-candidateOfInterest = GRanges(seqnames="chr4", IRanges(155429005,155429094), strand="-")
+candidateOfInterest = GRanges(seqnames=c("chr4","chr4"), IRanges( c(155429005, 155429055)  ,c(155429094,155429120)), strand=c("-","-") )
 testInSeq = readDNAStringSet("/media/schaffrr/Rstick/workspace/ncAnnotation/data/inSeq.fsa")
 
 

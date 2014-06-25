@@ -12,7 +12,7 @@ calculateAlignmentCoverageTwoGRanges(qh, sh)
 \item{query}{Granges object}
 }
 \value{
-data.frame coverage
+data.frame coverage, once query is used as reference and once subject
 }
 \description{
 Calculates the coverage of two GRanges objects
