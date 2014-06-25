@@ -12,11 +12,11 @@
 
 \item{annotName}{of the annotation file}
 
+\item{annotationL}{list of annotations}
+
 \item{...}{data to include in the new object.  Named arguments
     correspond to slots in the class definition. Unnamed arguments must
     be objects from classes that this class extends.}
-
-\item{annotationL}{list of annotations}
 }
 \description{
 Initialisation method for SequenceBasedAnnotation class

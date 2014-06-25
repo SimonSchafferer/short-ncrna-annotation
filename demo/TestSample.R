@@ -61,6 +61,15 @@ getAnnotationByID(testNew, id = 1)
 
 
 
+qh = GRanges(seqnames="chr4", IRanges(
+      start=c(1,6,1,8),
+      end=c(20,14,13,19)), 
+      strand="-")
+sh = GRanges(seqnames="chr4", IRanges(c(5,5,5,5),c(15,15,15,15) ), strand="-")
+
+
+
+
 
 
 

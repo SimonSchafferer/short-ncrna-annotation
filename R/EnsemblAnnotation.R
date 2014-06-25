@@ -40,6 +40,7 @@ checkValidityEnsemblAnnotation=function(object) {
 setValidity("EnsemblAnnotation", checkValidityEnsemblAnnotation)
 
 #' @rdname importRangedAnnotation-method
+#' @aliases importRangedAnnotation, EnsemblAnnotation
 setMethod("importRangedAnnotation", signature(object="EnsemblAnnotation"), function(object, pathToFile, filename, ...){
   
   geneDF = NULL
@@ -84,9 +85,13 @@ setMethod("convertRangesToDF", signature( "EnsemblAnnotation"), function(object,
 setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, ... ){
   gro = annotationGR(object)
   mapgro = annotationMap(object)
-  validObject(ensembl)
+  ingr = inputGR(object)
+  validObject(object)
   
-#   calculateAlignmentCoverageTwoGRanges
+  tmpIngr = ingr[queryHits(mapgro)]
+  tmpGro = gro[subjectHits(mapgro)]
+
+   calculateAlignmentCoverageTwoGRanges( qh=tmpIngr, sh=tmpGro )
   
   
 #   
