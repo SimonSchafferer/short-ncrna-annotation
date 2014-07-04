@@ -83,6 +83,7 @@ setMethod("convertRangesToDF", signature( "EnsemblAnnotation"), function(object,
 
 #' @rdname annotationSummary-method
 setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, ... ){
+  #First defining the genome location and the rest are feature overlaps
   gro = annotationGR(object)
   mapgro = annotationMap(object)
   ingr = inputGR(object)
