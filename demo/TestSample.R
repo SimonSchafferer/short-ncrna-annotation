@@ -1,3 +1,24 @@
+library(rtracklayer)
+library(Biostrings)
+library(sncRNAannotation)
+
+candidateOfInterest = GRanges(seqnames=c("chr4","chr4","chr7","chr5"), 
+                              IRanges( c(155429005, 155429055, 20283118, 23362617)  ,
+                                       c(155429094,155429120, 20283194, 23362826)),
+                              strand=c("-","-", "+", "+") )
+
+qh = GRanges(seqnames="chr4", IRanges(
+  start=c(1,6,1,8),
+  end=c(20,14,13,19)), 
+  strand="-")
+sh = GRanges(seqnames="chr4", IRanges(c(5,5,5,5),c(15,15,15,15) ), strand="-")
+
+ensembl = EnsemblAnnotation("ensemblAnnot", system.file("resources/ensembl/", package="sncRNAannotation"),"ensembl_gtf_v67_mm9.rda", candidateOfInterest)
+
+# chr7:20283118-20283194 #APOE many transcripts
+# chr5:23362617-23362826 #Nothing only intergenic
+
+
 # #Preparing libs
 pathMMU = "/home/simon/dbsOfflineUse/MusMusculus/"
 
