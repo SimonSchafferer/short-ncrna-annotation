@@ -93,17 +93,17 @@ setMethod("convertRangesToDF", signature( "EnsemblAnnotation"), function(object,
 protein_coding_AnnotationFunction_ensembl = function( annotGR, annotMap, inputGR, inputIDs){
   
   #Subsetting to necessary information
-  geneDF = with(annotGR, data.frame( 
+  geneDF = data.frame( 
     "InputID"=inputGR$tmpID, 
-    "gene_biotype"=gene_biotype,
+    "gene_biotype"=annotGR$gene_biotype,
     "gene_strand"=as.character(strand(annotGR)),
-    "gene_type"=type,
-    "gene_id"=gene_id,
-    "transcript_id"=transcript_id,
-    "exonIntron_number"=exon_number,
-    "gene_name"=gene_name,
-    "gene_transcript_name"=transcript_name
-  ) )
+    "gene_type"=annotGR$type,
+    "gene_id"=annotGR$gene_id,
+    "transcript_id"=annotGR$transcript_id,
+    "exonIntron_number"=annotGR$exon_number,
+    "gene_name"=annotGR$gene_name,
+    "gene_transcript_name"=annotGR$transcript_name
+  )
   
   missingIDs = inputIDs[which(!inputIDs %in% geneDF$InputID)]
   
@@ -137,22 +137,23 @@ protein_coding_AnnotationFunction_ensembl = function( annotGR, annotMap, inputGR
 #' @docType methods
 #' @rdname feature_annotation_Function-method
 #' @return data.frame
+#' @export
 feature_annotation_Function_ensembl = function(annotGR, annotMap, inputGR, inputIDs){
   
   alignmentCoverage_featureDF = calculateAlignmentCoverageTwoGRanges( qh=inputGR, sh=annotGR )
   colnames(alignmentCoverage_featureDF) = c("feature_queryCoverage","feature_subjectCoverage")
   
   #Subsetting to necessary information
-  featureDF = with(annotGR, data.frame( 
+  featureDF = data.frame( 
     "InputID"=inputGR$tmpID, 
-    "feature_biotype"=gene_biotype,
+    "feature_biotype"=annotGR$gene_biotype,
     "feature_strand" = as.character(strand(annotGR)),
-    "feature_type"=type,
-    "feature_id"=gene_id,
-    "feature_transcript_id"=transcript_id,
-    "feature_exonIntron_number"=exon_number,
-    "feature_name"=gene_name
-  ) )
+    "feature_type"=annotGR$type,
+    "feature_id"=annotGR$gene_id,
+    "feature_transcript_id"=annotGR$transcript_id,
+    "feature_exonIntron_number"=annotGR$exon_number,
+    "feature_name"=annotGR$gene_name
+  )
   featureDF = cbind(featureDF, alignmentCoverage_featureDF)
   
   missingIDs = inputIDs[which(!inputIDs %in% featureDF$InputID)]
@@ -179,9 +180,9 @@ feature_annotation_Function_ensembl = function(annotGR, annotMap, inputGR, input
   
 }
 
-
-#' @rdname annotationSummary-method
-setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, ... ){
+#' @rdname getFlatTable-method
+setMethod("getFlatTable", signature("EnsemblAnnotation"), function(object, ...){
+  
   #First defining the genome location and the rest are feature overlaps
   annotgr = annotationGR(object)
   mapgro = annotationMap(object)
@@ -191,12 +192,12 @@ setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, 
   
   tmpIngr = ingr[queryHits(mapgro)]
   tmpAnnotGR = annotgr[subjectHits(mapgro)]
- 
- ###############################################
- #  separating the protein-coding gene annotation from the feature annotation
- ###############################################
-
- #Indices are refering to the original file mapgro
+  
+  ###############################################
+  #  separating the protein-coding gene annotation from the feature annotation
+  ###############################################
+  
+  #Indices are refering to the original file mapgro
   protein_codingIdx = which(tmpAnnotGR$gene_biotype == "protein_coding")
   feature_annotationIdx = which(tmpAnnotGR$gene_biotype != "protein_coding")
   
@@ -208,33 +209,41 @@ setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, 
   
   protein_codingInGR = ingr[queryHits(protein_coding_map)]
   featureInGR = ingr[queryHits(feature_annotation_map)]
- 
- 
+  
+  ###############################################
+  #  Calling the gene and feature annotation Functions
+  ###############################################
+  protCodingDF = protein_coding_AnnotationFunction_ensembl( annotGR=protein_codingAnnotGR, 
+                                                            annotMap=protein_coding_map, 
+                                                            inputGR=protein_codingInGR, 
+                                                            inputIDs=ingr$tmpID)
+  ###############################################
+  #  Calling the feature annotation Function
+  ###############################################
+  featureDF = feature_annotation_Function_ensembl( annotGR=feature_AnnotGR, 
+                                                   annotMap=feature_annotation_map, 
+                                                   inputGR=featureInGR, 
+                                                   inputIDs=ingr$tmpID)
+  
+  return(list("protCodingDF"=protCodingDF, "featureDF"=featureDF))
+  
+})
 
- ###############################################
- #  Calling the gene and feature annotation Functions
- ###############################################
- protCodingDF = protein_coding_AnnotationFunction_ensembl( annotGR=protein_codingAnnotGR, 
-                                    annotMap=protein_coding_map, 
-                                    inputGR=protein_codingInGR, 
-                                    inputIDs=ingr$tmpID)
+
+#' @rdname annotationSummary-method
+setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, ... ){
  
+ flatL = getFlatTable(object)
  
+ protCodingDF = flatL$protCodingDF
+ featureDF =  flatL$featureDF
+  
  protCodingDFL = split(protCodingDF, protCodingDF$InputID)
  
  protCodingDF_summary = protCodingDF[ which( !duplicated(protCodingDF$InputID)) ,c(1:4,6,7)]#always first entry
  protCodingDF_summary$NumberOfTranscripts =  unlist( lapply( protCodingDFL, function(x){ 
    return(dim(x)[1])
  }))
- 
- ###############################################
- #  Calling the feature annotation Function
- ###############################################
- featureDF = feature_annotation_Function_ensembl( annotGR=feature_AnnotGR, 
-                                                   annotMap=feature_annotation_map, 
-                                                   inputGR=featureInGR, 
-                                                   inputIDs=ingr$tmpID)
- 
  
  rowCoverage = rowSums( featureDF[,c("feature_queryCoverage", "feature_subjectCoverage")] )# 2 is the highest number in rowSums
  rowCoverage = max(rowCoverage,na.rm=TRUE)-rowCoverage

@@ -16,14 +16,15 @@ qh = GRanges(seqnames="chr4", IRanges(
 sh = GRanges(seqnames="chr4", IRanges(c(5,5,5,5),c(15,15,15,15) ), strand="-")
 
 ensembl = EnsemblAnnotation("ensemblAnnot", system.file("resources/ensembl/", package="sncRNAannotation"),"ensembl_gtf_v67_mm9.rda", candidateOfInterest)
-general = GRangesBasedAnnotation("refseqAnnot",system.file("resources/ucsc/", package="sncRNAannotation"),"refseqGenes_gtf_ucsc_mm9.rda", candidateOfInterest)
-
+# general = GRangesBasedAnnotation("refseqAnnot",system.file("resources/ucsc/", package="sncRNAannotation"),"refseqGenes_gtf_ucsc_mm9.rda", candidateOfInterest)
 general = GRangesBasedAnnotation("test", system.file("resources/ensembl/", package="sncRNAannotation"),"ensembl_gtf_v67_mm9.rda", candidateOfInterest)
 
 
-test = annotationSummary(ensembl)
-test = annotationSummary(general)
+test1 = annotationSummary(ensembl)
+test2 = annotationSummary(general)
 
+test3 = getFlatTable(ensembl)
+test4 = getFlatTable(general)
 
 
 

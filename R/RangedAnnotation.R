@@ -172,6 +172,14 @@ setMethod("getAnnotationByID", signature( "RangedAnnotation"), function(object, 
 #' @export
 setGeneric("annotationSummary", function( object, ... ) { standardGeneric("annotationSummary") })
 
+#' @title Get Flat table of annotation for db storage
+#' 
+#' @param RangedAnnotation class
+#' @docType methods
+#' @rdname getFlatTable-method
+#' @return Annotation data.frames as list or plain data.frame
+#' @export
+setGeneric("getFlatTable", function( object, ... ) { standardGeneric("getFlatTable") })
 
 #' @title Convert Ranges object to data frame
 #' 

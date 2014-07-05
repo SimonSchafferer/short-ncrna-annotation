@@ -96,10 +96,9 @@ feature_annotation_Function_gr = function(annotGR, annotMap, inputGR, inputIDs){
   return(featureDF)
 }
 
-
-
-#' @rdname annotationSummary-method
-setMethod("annotationSummary", signature("GRangesBasedAnnotation"), function(object,... ){
+#' @rdname getFlatTable-method
+setMethod("getFlatTable", signature("GRangesBasedAnnotation"), function(object, ...){
+  
   #First defining the genome location and the rest are feature overlaps
   annotgr = annotationGR(object)
   mapgro = annotationMap(object)
@@ -109,7 +108,7 @@ setMethod("annotationSummary", signature("GRangesBasedAnnotation"), function(obj
   
   tmpIngr = ingr[queryHits(mapgro)]
   tmpAnnotGR = annotgr[subjectHits(mapgro)]
-
+  
   #Indices are refering to the original file mapgro
   feature_annotation_map = mapgro
   feature_AnnotGR = tmpAnnotGR
@@ -119,9 +118,16 @@ setMethod("annotationSummary", signature("GRangesBasedAnnotation"), function(obj
   #  Calling the feature annotation Function
   ###############################################
   featureDF = feature_annotation_Function_gr( annotGR=feature_AnnotGR, 
-                                           annotMap=feature_annotation_map, 
-                                           inputGR=featureInGR, 
-                                           inputIDs=ingr$tmpID)
+                                              annotMap=feature_annotation_map, 
+                                              inputGR=featureInGR, 
+                                              inputIDs=ingr$tmpID)
+  return(featureDF)
+})
+
+#' @rdname annotationSummary-method
+setMethod("annotationSummary", signature("GRangesBasedAnnotation"), function(object,... ){
+
+  featureDF = getFlatTable(object)
   
   rowCoverage = rowSums( featureDF[,c("feature_queryCoverage", "feature_subjectCoverage")] )# 2 is the highest number in rowSums
   rowCoverage = max(rowCoverage,na.rm=TRUE)-rowCoverage

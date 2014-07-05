@@ -79,6 +79,12 @@ setMethod("convertRangesToDF", signature( "RefSeqUCSCAnnotation"), function(obje
   return(as.data.frame(gro))
 })
 
+#' @rdname getFlatTable-method
+setMethod("getFlatTable", signature("RefSeqUCSCAnnotation"), function(object, ...){
+  gro = annotationGR(object)
+  return(as.data.frame(gro))
+})
+
 #' @rdname annotationSummary-method
 setMethod("annotationSummary", signature("RefSeqUCSCAnnotation"), function(object,... ){
   gro = annotationGR(object)
