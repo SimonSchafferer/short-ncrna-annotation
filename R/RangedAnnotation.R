@@ -191,7 +191,3 @@ setMethod("convertRangesToDF", signature("RangedAnnotation"), function(object, .
 setMethod("convertRangesToDF", signature( "GRanges"), function(object,... ){
   return(as.data.frame(object))
 })
-
-
-
-

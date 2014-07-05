@@ -2,10 +2,12 @@ library(rtracklayer)
 library(Biostrings)
 library(sncRNAannotation)
 
-candidateOfInterest = GRanges(seqnames=c("chr4","chr4","chr7","chr5"), 
-                              IRanges( c(155429005, 155429055, 20283118, 23362617)  ,
-                                       c(155429094,155429120, 20283194, 23362826)),
-                              strand=c("-","-", "+", "+") )
+numberOfEntries = 1
+candidateOfInterest = GRanges(seqnames=rep( c("chr4","chr4","chr7","chr5"),numberOfEntries), 
+                              IRanges( rep(c(155429005, 155429055, 20283118, 23362617),numberOfEntries)  ,
+                                      rep(c(155429094,155429120, 20283194, 23362826),numberOfEntries)),
+                              strand=rep(c("-","-", "+", "+"),numberOfEntries) )
+
 
 qh = GRanges(seqnames="chr4", IRanges(
   start=c(1,6,1,8),
@@ -14,6 +16,22 @@ qh = GRanges(seqnames="chr4", IRanges(
 sh = GRanges(seqnames="chr4", IRanges(c(5,5,5,5),c(15,15,15,15) ), strand="-")
 
 ensembl = EnsemblAnnotation("ensemblAnnot", system.file("resources/ensembl/", package="sncRNAannotation"),"ensembl_gtf_v67_mm9.rda", candidateOfInterest)
+general = GRangesBasedAnnotation("refseqAnnot",system.file("resources/ucsc/", package="sncRNAannotation"),"refseqGenes_gtf_ucsc_mm9.rda", candidateOfInterest)
+
+general = GRangesBasedAnnotation("test", system.file("resources/ensembl/", package="sncRNAannotation"),"ensembl_gtf_v67_mm9.rda", candidateOfInterest)
+
+
+test = annotationSummary(ensembl)
+test = annotationSummary(general)
+
+
+
+
+
+
+
+a = test$protCodingDF
+b = test$featureDF
 
 # chr7:20283118-20283194 #APOE many transcripts
 # chr5:23362617-23362826 #Nothing only intergenic
