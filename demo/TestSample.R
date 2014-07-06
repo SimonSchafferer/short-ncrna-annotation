@@ -3,10 +3,10 @@ library(Biostrings)
 library(sncRNAannotation)
 
 numberOfEntries = 1
-candidateOfInterest = GRanges(seqnames=rep( c("chr4","chr4","chr7","chr5"),numberOfEntries), 
-                              IRanges( rep(c(155429005, 155429055, 20283118, 23362617),numberOfEntries)  ,
-                                      rep(c(155429094,155429120, 20283194, 23362826),numberOfEntries)),
-                              strand=rep(c("-","-", "+", "+"),numberOfEntries) )
+candidateOfInterest = GRanges(seqnames=rep( c("chr4","chr4","chr7","chr5","chr16"),numberOfEntries), 
+                              IRanges( rep(c(155429005, 155429055, 20283118, 23362617,84714182),numberOfEntries)  ,
+                                      rep(c(155429094,155429120, 20283194, 23362826, 84714202),numberOfEntries)),
+                              strand=rep(c("-","-", "+", "+","+"),numberOfEntries) )
 
 
 qh = GRanges(seqnames="chr4", IRanges(
@@ -14,6 +14,9 @@ qh = GRanges(seqnames="chr4", IRanges(
   end=c(20,14,13,19)), 
   strand="-")
 sh = GRanges(seqnames="chr4", IRanges(c(5,5,5,5),c(15,15,15,15) ), strand="-")
+
+
+# ensembl = EnsemblAnnotation("ensemblAnnot", system.file("resources/ensembl/", package="sncRNAannotation"),"ensembl_gtf_v75_mm10.rda", candidateOfInterest)
 
 ensembl = EnsemblAnnotation("ensemblAnnot", system.file("resources/ensembl/", package="sncRNAannotation"),"ensembl_gtf_v67_mm9.rda", candidateOfInterest)
 # general = GRangesBasedAnnotation("refseqAnnot",system.file("resources/ucsc/", package="sncRNAannotation"),"refseqGenes_gtf_ucsc_mm9.rda", candidateOfInterest)
