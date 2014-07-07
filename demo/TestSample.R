@@ -2,12 +2,13 @@ library(rtracklayer)
 library(Biostrings)
 library(sncRNAannotation)
 
-numberOfEntries = 1
-candidateOfInterest = GRanges(seqnames=rep( c("chr4","chr4","chr7","chr5","chr16"),numberOfEntries), 
-                              IRanges( rep(c(155429005, 155429055, 20283118, 23362617,84714182),numberOfEntries)  ,
-                                      rep(c(155429094,155429120, 20283194, 23362826, 84714202),numberOfEntries)),
-                              strand=rep(c("-","-", "+", "+","+"),numberOfEntries) )
+options(stringsAsFactors=FALSE)
 
+numberOfEntries = 10000
+candidateOfInterest = GRanges(seqnames=rep( c("chr4","chr4","chr7","chr5","chr16","chr4"),numberOfEntries), 
+                              IRanges( rep(c(155429005, 155429055, 20283118, 23362617,84714182,155421393),numberOfEntries)  ,
+                                      rep(c(155429094,155429120, 20283194, 23362826, 84714202,155421564),numberOfEntries)),
+                              strand=rep(c("-","-", "+", "+","+","-"),numberOfEntries) )
 
 qh = GRanges(seqnames="chr4", IRanges(
   start=c(1,6,1,8),
@@ -22,14 +23,19 @@ ensembl = EnsemblAnnotation("ensemblAnnot", system.file("resources/ensembl/", pa
 # general = GRangesBasedAnnotation("refseqAnnot",system.file("resources/ucsc/", package="sncRNAannotation"),"refseqGenes_gtf_ucsc_mm9.rda", candidateOfInterest)
 general = GRangesBasedAnnotation("test", system.file("resources/ensembl/", package="sncRNAannotation"),"ensembl_gtf_v67_mm9.rda", candidateOfInterest)
 
-
+Rprof() 
 test1 = annotationSummary(ensembl)
+summaryRprof() 
+
 test2 = annotationSummary(general)
 
 test3 = getFlatTable(ensembl)
 test4 = getFlatTable(general)
 
 
+
+test  = data.frame("ID"=c(1,1,1,2,2,2), "A"=c("a","b","a","b","b",NA))
+test = as.matrix(table(test))
 
 
 

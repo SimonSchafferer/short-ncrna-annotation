@@ -102,7 +102,8 @@ protein_coding_AnnotationFunction_ensembl = function( annotGR, annotMap, inputGR
     "transcript_id"=annotGR$transcript_id,
     "exonIntron_number"=annotGR$exon_number,
     "gene_name"=annotGR$gene_name,
-    "gene_transcript_name"=annotGR$transcript_name
+    "gene_transcript_name"=annotGR$transcript_name, 
+    stringsAsFactors=FALSE
   )
   
   missingIDs = inputIDs[which(!inputIDs %in% geneDF$InputID)]
@@ -117,7 +118,8 @@ protein_coding_AnnotationFunction_ensembl = function( annotGR, annotMap, inputGR
       "transcript_id"=NA,
       "exonIntron_number"=NA,
       "gene_name"=NA,
-      "gene_transcript_name"=NA
+      "gene_transcript_name"=NA, 
+      stringsAsFactors=FALSE
     )
     
     geneDF = rbind( geneDF, missingDF)
@@ -152,8 +154,8 @@ feature_annotation_Function_ensembl = function(annotGR, annotMap, inputGR, input
     "feature_id"=annotGR$gene_id,
     "feature_transcript_id"=annotGR$transcript_id,
     "feature_exonIntron_number"=annotGR$exon_number,
-    "feature_name"=annotGR$gene_name
-  )
+    "feature_name"=annotGR$gene_name, 
+    stringsAsFactors=FALSE)
   featureDF = cbind(featureDF, alignmentCoverage_featureDF)
   
   missingIDs = inputIDs[which(!inputIDs %in% featureDF$InputID)]
@@ -169,7 +171,8 @@ feature_annotation_Function_ensembl = function(annotGR, annotMap, inputGR, input
       "feature_exonIntron_number"=NA,
       "feature_name"=NA,
       "feature_queryCoverage"=NA,
-      "feature_subjectCoverage"=NA
+      "feature_subjectCoverage"=NA,
+      stringsAsFactors=FALSE
     )
     featureDF = rbind( featureDF, missingDF)
   }
@@ -238,22 +241,35 @@ setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, 
  protCodingDF = flatL$protCodingDF
  featureDF =  flatL$featureDF
   
- protCodingDFL = split(protCodingDF, protCodingDF$InputID)
+ pcid = protCodingDF$InputID
+ pcgt = protCodingDF$gene_type
+ 
+ protCodingDFL = split(pcgt, pcid)
  
  protCodingDF_summary = protCodingDF[ which( !duplicated(protCodingDF$InputID)) ,c(1:4,6,7)]#always first entry
- protCodingDF_summary$NumberOfTranscripts =  unlist( lapply( protCodingDFL, function(x){ 
-   return(dim(x)[1])
- }))
+
+ protCodingDF_summary$NumberOfTranscripts =  unlist( lapply( protCodingDFL, length) )
+ 
+ toInvestigate = protCodingDF_summary$NumberOfTranscripts > 1
+ protCodingDF_summary$gene_type = as.character(protCodingDF_summary$gene_type)
+ protCodingDF_summary$gene_type[toInvestigate] = unlist( lapply( protCodingDFL[toInvestigate], function(gt){
+   return( paste0( na.omit(unique(gt)), collapse="/") )
+ }) )
+ protCodingDF_summary$gene_type[which(protCodingDF_summary$gene_type == "")] = NA
  
  rowCoverage = rowSums( featureDF[,c("feature_queryCoverage", "feature_subjectCoverage")] )# 2 is the highest number in rowSums
  rowCoverage = max(rowCoverage,na.rm=TRUE)-rowCoverage
  featureDF$rowCoverage = rowCoverage
  featureDF = featureDF[order(featureDF$InputID, featureDF$rowCoverage),]
  
- featureDFL = split(featureDF, featureDF$InputID)
  featureDF_summary = featureDF[ which( !duplicated(featureDF$InputID)),]#always first entry
+ 
+ featid = featureDF$InputID
+ featgt = featureDF$feature_type
+ featureDFL = split(featgt, featid)
+ 
  featureDF_summary$NumberOfTranscripts =  unlist( lapply( featureDFL, function(x){ 
-   return(dim(x)[1])
+   return(length(x))
  }))
  
  resL = list( "protCodingDF"=protCodingDF_summary, 

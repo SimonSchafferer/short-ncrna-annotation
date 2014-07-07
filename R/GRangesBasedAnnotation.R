@@ -78,7 +78,7 @@ feature_annotation_Function_gr = function(annotGR, annotMap, inputGR, inputIDs){
   alignmentCoverage_featureDF = calculateAlignmentCoverageTwoGRanges( qh=inputGR, sh=annotGR )
   colnames(alignmentCoverage_featureDF) = c("feature_queryCoverage","feature_subjectCoverage")
   
-  featureDF = data.frame("InputID"=inputGR$tmpID)
+  featureDF = data.frame("InputID"=inputGR$tmpID, stringsAsFactors=FALSE)
   featureDF = cbind( featureDF, as.data.frame( elementMetadata(annotGR) ) )
   featureDF = cbind(featureDF, alignmentCoverage_featureDF)
   featureDF$featureStrand = as.character(strand(annotGR))
@@ -86,7 +86,7 @@ feature_annotation_Function_gr = function(annotGR, annotMap, inputGR, inputIDs){
   missingIDs = inputIDs[which(!inputIDs %in% featureDF$InputID)]
   
   if( length(missingIDs) != 0 ){
-    missingDF = data.frame(matrix(nrow = length(missingIDs), ncol = dim(featureDF)[2]))
+    missingDF = data.frame(matrix(nrow = length(missingIDs), ncol = dim(featureDF)[2]), stringsAsFactors=FALSE)
     colnames(missingDF) = colnames(featureDF)
     missingDF$InputID = missingIDs
     featureDF = rbind( featureDF, missingDF)
@@ -134,12 +134,14 @@ setMethod("annotationSummary", signature("GRangesBasedAnnotation"), function(obj
   featureDF$rowCoverage = rowCoverage
   featureDF = featureDF[order(featureDF$InputID, featureDF$rowCoverage),]
   
-  featureDFL = split(featureDF, featureDF$InputID)
+  featid = featureDF$InputID
+  featgt = featureDF$InputID
+  featureDFL = split(featgt, featid)
   featureDF_summary = featureDF[ which( !duplicated(featureDF$InputID)),]#always first entry
   featureDF_summary$NumberOfTranscripts =  unlist( lapply( featureDFL, function(x){ 
-    return(dim(x)[1])
+    return(length(x))
   }))
-  
+    
   return(featureDF_summary)
 })
 
