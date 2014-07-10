@@ -4,7 +4,7 @@ library(sncRNAannotation)
 
 options(stringsAsFactors=FALSE)
 
-numberOfEntries = 10000
+numberOfEntries = 1
 candidateOfInterest = GRanges(seqnames=rep( c("chr4","chr4","chr7","chr5","chr16","chr4"),numberOfEntries), 
                               IRanges( rep(c(155429005, 155429055, 20283118, 23362617,84714182,155421393),numberOfEntries)  ,
                                       rep(c(155429094,155429120, 20283194, 23362826, 84714202,155421564),numberOfEntries)),

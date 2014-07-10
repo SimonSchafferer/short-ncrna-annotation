@@ -234,8 +234,9 @@ setMethod("getFlatTable", signature("EnsemblAnnotation"), function(object, ...){
 
 
 #' @rdname annotationSummary-method
-setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, ... ){
- 
+setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, subsetAnnotStr = c("exon","intron","UTR"), ... ){
+ #subsetAnnotStr can be used to limit the annotation string to currently only exon/intron/UTR  
+
  flatL = getFlatTable(object)
  
  protCodingDF = flatL$protCodingDF
@@ -253,7 +254,9 @@ setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, 
  toInvestigate = protCodingDF_summary$NumberOfTranscripts > 1
  protCodingDF_summary$gene_type = as.character(protCodingDF_summary$gene_type)
  protCodingDF_summary$gene_type[toInvestigate] = unlist( lapply( protCodingDFL[toInvestigate], function(gt){
-   return( paste0( na.omit(unique(gt)), collapse="/") )
+   annotStr = na.omit(unique(gt))
+   annotStr = annotStr[order(annotStr)]
+   return( paste0( annotStr[which(annotStr%in%subsetAnnotStr)] , collapse="/") )
  }) )
  protCodingDF_summary$gene_type[which(protCodingDF_summary$gene_type == "")] = NA
  
