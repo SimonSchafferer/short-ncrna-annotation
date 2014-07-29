@@ -10,6 +10,17 @@ candidateOfInterest = GRanges(seqnames=rep( c("chr4","chr4","chr7","chr5","chr16
                                       rep(c(155429094,155429120, 20283194, 23362826, 84714202,155421564),numberOfEntries)),
                               strand=rep(c("-","-", "+", "+","+","-"),numberOfEntries) )
 
+candidateOfInterestHum = GRanges(seqnames=rep( c("chr15","chr15"),numberOfEntries), 
+                              IRanges( rep(c(44180429, 44179404 ),numberOfEntries)  ,
+                                       rep(c(44180503, 44179476),numberOfEntries)),
+                              strand=rep(c("-","-"),numberOfEntries) )
+
+candidateOfInterestHum = GRanges(seqnames=rep( c("chr19","chr19"),numberOfEntries), 
+                                 IRanges( rep(c(45411384, 45410998 ),numberOfEntries)  ,
+                                          rep(c(45411419, 45411060),numberOfEntries)),
+                                 strand=rep(c("+","-"),numberOfEntries) )
+
+
 qh = GRanges(seqnames="chr4", IRanges(
   start=c(1,6,1,8),
   end=c(20,14,13,19)), 
@@ -17,14 +28,22 @@ qh = GRanges(seqnames="chr4", IRanges(
 sh = GRanges(seqnames="chr4", IRanges(c(5,5,5,5),c(15,15,15,15) ), strand="-")
 
 
+
 # ensembl = EnsemblAnnotation("ensemblAnnot", system.file("resources/ensembl/", package="sncRNAannotation"),"ensembl_gtf_v75_mm10.rda", candidateOfInterest)
+ensemblHum = EnsemblAnnotation("ensemblAnnot", system.file("resources/ensembl/", package="sncRNAannotation"),"ensembl_gtf_hg19.rda", candidateOfInterestHum)
 
 ensembl = EnsemblAnnotation("ensemblAnnot", system.file("resources/ensembl/", package="sncRNAannotation"),"ensembl_gtf_v67_mm9.rda", candidateOfInterest)
 # general = GRangesBasedAnnotation("refseqAnnot",system.file("resources/ucsc/", package="sncRNAannotation"),"refseqGenes_gtf_ucsc_mm9.rda", candidateOfInterest)
 general = GRangesBasedAnnotation("test", system.file("resources/ensembl/", package="sncRNAannotation"),"ensembl_gtf_v67_mm9.rda", candidateOfInterest)
 
 Rprof() 
+testHum = annotationSummary(ensemblHum)
+summaryRprof() 
+
+
+Rprof() 
 test1 = annotationSummary(ensembl)
+
 summaryRprof() 
 
 test2 = annotationSummary(general)

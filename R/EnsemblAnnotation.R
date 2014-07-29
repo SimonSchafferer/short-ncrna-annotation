@@ -92,6 +92,9 @@ setMethod("convertRangesToDF", signature( "EnsemblAnnotation"), function(object,
 #' @return data.frame
 protein_coding_AnnotationFunction_ensembl = function( annotGR, annotMap, inputGR, inputIDs){
   
+  alignmentCoverage_geneDF = calculateAlignmentCoverageTwoGRanges( qh=inputGR, sh=annotGR )
+  colnames(alignmentCoverage_geneDF) = c("gene_queryCoverage","gene_subjectCoverage")
+  
   #Subsetting to necessary information
   geneDF = data.frame( 
     "InputID"=inputGR$tmpID, 
@@ -105,6 +108,7 @@ protein_coding_AnnotationFunction_ensembl = function( annotGR, annotMap, inputGR
     "gene_transcript_name"=annotGR$transcript_name, 
     stringsAsFactors=FALSE
   )
+  geneDF = cbind(geneDF, alignmentCoverage_geneDF)
   
   missingIDs = inputIDs[which(!inputIDs %in% geneDF$InputID)]
   
@@ -119,8 +123,11 @@ protein_coding_AnnotationFunction_ensembl = function( annotGR, annotMap, inputGR
       "exonIntron_number"=NA,
       "gene_name"=NA,
       "gene_transcript_name"=NA, 
+      "gene_queryCoverage"=NA,
+      "gene_subjectCoverage"=NA,
       stringsAsFactors=FALSE
     )
+    
     
     geneDF = rbind( geneDF, missingDF)
   }
@@ -234,7 +241,9 @@ setMethod("getFlatTable", signature("EnsemblAnnotation"), function(object, ...){
 
 
 #' @rdname annotationSummary-method
-setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, subsetAnnotStr = c("exon","intron","UTR"), ... ){
+setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, 
+                                              geneSubsetCols = c("gene_biotype", "gene_strand", "gene_type", "transcript_id", "exonIntron_number", "gene_name") , 
+                                              subsetAnnotStr = c("exon","intron","UTR"), ... ){
  #subsetAnnotStr can be used to limit the annotation string to currently only exon/intron/UTR  
 
  flatL = getFlatTable(object)
@@ -246,8 +255,13 @@ setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, 
  pcgt = protCodingDF$gene_type
  
  protCodingDFL = split(pcgt, pcid)
+  
+ rowCoverage = rowSums( protCodingDF[,c("gene_queryCoverage", "gene_subjectCoverage")] )# 2 is the highest number in rowSums
+ rowCoverage = max(rowCoverage,na.rm=TRUE)-rowCoverage
+ protCodingDF$rowCoverage = rowCoverage
+ protCodingDF = protCodingDF[order(protCodingDF$InputID, protCodingDF$rowCoverage),]
  
- protCodingDF_summary = protCodingDF[ which( !duplicated(protCodingDF$InputID)) ,c(1:8)]#always first entry
+ protCodingDF_summary = protCodingDF[ which( !duplicated(protCodingDF$InputID)) ,geneSubsetCols]#always first entry c(1:8)
 
  protCodingDF_summary$NumberOfTranscripts =  unlist( lapply( protCodingDFL, length) )
  
@@ -259,6 +273,7 @@ setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, 
    return( paste0( annotStr[which(annotStr%in%subsetAnnotStr)] , collapse="/") )
  }) )
  protCodingDF_summary$gene_type[which(protCodingDF_summary$gene_type == "")] = NA
+ 
  
  rowCoverage = rowSums( featureDF[,c("feature_queryCoverage", "feature_subjectCoverage")] )# 2 is the highest number in rowSums
  rowCoverage = max(rowCoverage,na.rm=TRUE)-rowCoverage
