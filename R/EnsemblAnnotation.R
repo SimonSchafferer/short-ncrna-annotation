@@ -247,7 +247,7 @@ setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, 
  
  protCodingDFL = split(pcgt, pcid)
  
- protCodingDF_summary = protCodingDF[ which( !duplicated(protCodingDF$InputID)) ,c(1:4,6,7)]#always first entry
+ protCodingDF_summary = protCodingDF[ which( !duplicated(protCodingDF$InputID)) ,c(1:8)]#always first entry
 
  protCodingDF_summary$NumberOfTranscripts =  unlist( lapply( protCodingDFL, length) )
  
@@ -274,6 +274,9 @@ setMethod("annotationSummary", signature("EnsemblAnnotation"), function(object, 
  featureDF_summary$NumberOfTranscripts =  unlist( lapply( featureDFL, function(x){ 
    return(length(x))
  }))
+ 
+ rownames(protCodingDF_summary) = 1:dim(protCodingDF_summary)[1]
+ rownames(featureDF_summary) = 1:dim(featureDF_summary)[1]
  
  resL = list( "protCodingDF"=protCodingDF_summary, 
               "featureDF"=featureDF_summary )

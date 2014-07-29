@@ -141,7 +141,9 @@ setMethod("annotationSummary", signature("GRangesBasedAnnotation"), function(obj
   featureDF_summary$NumberOfTranscripts =  unlist( lapply( featureDFL, function(x){ 
     return(length(x))
   }))
-    
+  
+  rownames(featureDF_summary) = 1:dim(featureDF_summary)[1]
+  
   return(featureDF_summary)
 })
 
