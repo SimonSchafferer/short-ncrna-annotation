@@ -1,4 +1,15 @@
 library(rtracklayer)
+setwd("/home/simon/dbsOfflineUse/MusMusculus/")
+load("/home/simon/dbsOfflineUse/MusMusculus/ensembl_gtf_v75_mm10.rda")
+mm9 = import("/home/simon/dbsOfflineUse/MusMusculus/ensembl_gtf_v75_mm10.gtf",asRangedData=FALSE)
+setwd("/home/simon/dbsOfflineUse/HomoSapiens")
+load("/home/simon/dbsOfflineUse/HomoSapiens/ensembl_gtf_hg19.rda")
+hg19 = import("/home/simon/dbsOfflineUse/HomoSapiens/ensembl_gtf_hg19.gtf", asRangedData=FALSE)
+load("/home/simon/RWorkspace/short-ncrna-annotation/inst/resources/ensembl/ensembl_gtf_hg19.rda")
+
+
+
+library(rtracklayer)
 library(Biostrings)
 library(sncRNAannotation)
 
@@ -15,10 +26,11 @@ candidateOfInterestHum = GRanges(seqnames=rep( c("chr15","chr15"),numberOfEntrie
                                        rep(c(44180503, 44179476),numberOfEntries)),
                               strand=rep(c("-","-"),numberOfEntries) )
 
-candidateOfInterestHum = GRanges(seqnames=rep( c("chr19","chr19"),numberOfEntries), 
-                                 IRanges( rep(c(45411384, 45410998 ),numberOfEntries)  ,
-                                          rep(c(45411419, 45411060),numberOfEntries)),
-                                 strand=rep(c("+","-"),numberOfEntries) )
+candidateOfInterestHum = GRanges(seqnames=rep( c("chr19","chr19","chr1"),numberOfEntries), 
+                                 IRanges( rep(c(45411384, 45410998,12613 ),numberOfEntries)  ,
+                                          rep(c(45411419, 45411060,12721),numberOfEntries)),
+                                 strand=rep(c("+","-","+"),numberOfEntries) )
+
 
 
 qh = GRanges(seqnames="chr4", IRanges(
