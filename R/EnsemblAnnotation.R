@@ -106,7 +106,6 @@ protein_coding_AnnotationFunction_ensembl = function( annotGR, annotMap, inputGR
     "exonIntron_number"=annotGR$exon_number,
     "gene_name"=annotGR$gene_name,
     "gene_transcript_name"=annotGR$transcript_name,
-    "gene_transcript_source" = annotGR$transcript_source,
     stringsAsFactors=FALSE
   )
   geneDF = cbind(geneDF, alignmentCoverage_geneDF)
@@ -124,7 +123,6 @@ protein_coding_AnnotationFunction_ensembl = function( annotGR, annotMap, inputGR
       "exonIntron_number"=NA,
       "gene_name"=NA,
       "gene_transcript_name"=NA,
-      "gene_transcript_source"=NA,
       "gene_queryCoverage"=NA,
       "gene_subjectCoverage"=NA,
       stringsAsFactors=FALSE
