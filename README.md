@@ -24,7 +24,7 @@ candidateOfInterestMouse = GRanges(seqnames=c("chr4","chr4","chr7","chr5","chr16
 
 The interval based annotation can be split in two different types: 
 ### Feature annotation
-The feature annotation can be employed for any interval based annotation. It reports all features that overlap a given range from the data that is being investigated. Therefore tracks from the UCSC genome browser may be employed such as the miRNA track, or the tRNA track. 
+The feature annotation can be employed for any interval based annotation. It reports all features that overlap a given range from the data that is being investigated. Therefore tracks from the UCSC genome browser may be employed, such as the miRNA track, or the tRNA track. 
 
 ```R
 #DO NOT EXECUTE 
@@ -32,13 +32,7 @@ general = GRangesBasedAnnotation("miRNA.annotation",system.file("resources/PATHT
 ```
 
 ### Protein-coding gene-based annotation
-The protein-coding gene based annotation is based on a two-step annotation process. First the protein-coding gene is annotated separately from 
-the ncRNA feature to define the reference locus. It reports the gene name strand and the overlapping position i.e. intergenic, intron, exon, 
-exon/intron boundaryor UTR depending on the location of the gene that is investigated. In the second step a feature annotation is applied, 
-reporting overlapping ncRNA annotations in this region i.e. the gene of interest represents snoRNA X that is located in intron Y of gene Z. 
-As this annotation is more specialized, it needs to be in a format interpretable by the program. Currently the mouse and human ENSEMBL and RefSeq 
-annotation is supported, respectively. However, other species may be easily employed by downloading and converting the GFF annotation from ENSEMBL, 
-or the RefSeq annotation from UCSC.
+The protein-coding gene based annotation is based on a two-step annotation process. First, the protein-coding gene is annotated separately from the ncRNA feature to define the reference locus. It reports the gene name, strand and the overlapping position i.e. intergenic, intron, exon, exon/intron boundary or UTR depending on the location of the gene that is investigated. Secondly, a feature annotation is applied, which reports overlapping ncRNA annotations in this region i.e. the gene of interest represents snoRNA X that is located in intron Y of gene Z. The protein-coding gene based annotation needs to be in a format interpretable by the program. Currently, the mouse and human ENSEMBL and RefSeq annotation is supported, respectively. However, other species may be easily employed by downloading and converting the GFF annotation from ENSEMBL, or the RefSeq annotation from UCSC.
 
 Based on this data the interval based annotation searches for overlapping genomic coordinates within the annotation files provided. 
 ```R
@@ -60,7 +54,6 @@ testMouse = annotationSummary(ensemblMouse)
 head(testMouse$protCodingDF)
 head(testMouse$featureDF)
 ```
-
 
 
 ## Sequence based annotation
