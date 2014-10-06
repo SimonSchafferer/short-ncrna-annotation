@@ -4,16 +4,22 @@
 \alias{annotationSummary}
 \alias{annotationSummary,EnsemblAnnotation-method}
 \alias{annotationSummary,GRangesBasedAnnotation-method}
+\alias{annotationSummary,NcbiBlastAnnotation-method}
 \alias{annotationSummary,RefSeqUCSCAnnotation-method}
 \title{Summarize annotation}
 \usage{
-\S4method{annotationSummary}{EnsemblAnnotation}(object, ...)
+\S4method{annotationSummary}{EnsemblAnnotation}(object,
+  geneSubsetCols = c("gene_biotype", "gene_strand", "gene_type",
+  "transcript_id", "exonIntron_number", "gene_name"),
+  subsetAnnotStr = c("exon", "intron", "UTR"), ...)
 
 \S4method{annotationSummary}{GRangesBasedAnnotation}(object, ...)
 
 annotationSummary(object, ...)
 
 \S4method{annotationSummary}{RefSeqUCSCAnnotation}(object, ...)
+
+\S4method{annotationSummary}{NcbiBlastAnnotation}(object, ...)
 }
 \arguments{
 \item{RangedAnnotation}{class}

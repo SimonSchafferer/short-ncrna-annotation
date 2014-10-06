@@ -92,7 +92,7 @@ setMethod("executeAnnotation", "NcbiBlastAnnotation", function(object,pathToFile
   dust = if(dust){"yes"}else{"no"}
   
   blastcmd <- paste("blastn -query", tmpFile ,"-db", pathToFile ,"-max_target_seqs",
-                    max_target_seqs,"-word_size",word_size,"-num_threads",num_threads,"-outfmt \"5\"", " -dust ", dust)
+                    max_target_seqs,"-word_size",word_size,"-num_threads",num_threads,"-outfmt \"5\"", " -dust", dust )
   
   message(paste0( "Executing Blast command: ", blastcmd ))
   
@@ -129,5 +129,21 @@ setMethod("executeAnnotation", "NcbiBlastAnnotation", function(object,pathToFile
   
 })
 
+#' @title Constructor method for NcbiBlastAnnotation class
+#'
+#' @param object currently supported: NcbiBlastAnnotation
+#' @param pathToFile path to an annotation File (currently ncbi makeblast db formatted database)
+#' @param inputStringSet XStringSet of the sequences one wants to annotate
+#' @param ncbiBlast specific parameters see: ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/
+#' @export
+#' @docType methods
+#' @rdname NcbiBlastAnnotation-method
+NcbiBlastAnnotation = function( annotName=annotName, pathToFile, inputStringSet, word_size=11, num_threads=2, dust=TRUE  ){
+  new( "NcbiBlastAnnotation", annotName=annotName, pathToFile=pathToFile, inputStringSet=inputStringSet, word_size=word_size, num_threads=num_threads,dust=dust )
+}
 
+#' @rdname annotationSummary-method
+setMethod("annotationSummary", signature("NcbiBlastAnnotation"), function(object,... ){
+  return(do.call(rbind,annotationL(object)))
+})
 

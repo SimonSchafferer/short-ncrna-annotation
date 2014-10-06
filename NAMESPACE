@@ -2,6 +2,7 @@
 
 export(EnsemblAnnotation)
 export(GRangesBasedAnnotation)
+export(NcbiBlastAnnotation)
 export(RangedAnnotation)
 export(RefSeqUCSCAnnotation)
 export(annotName)
