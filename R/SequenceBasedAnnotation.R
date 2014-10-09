@@ -100,8 +100,8 @@ setMethod("executeAnnotation", "NcbiBlastAnnotation", function(object,pathToFile
   blastoutxml = XML::xmlParse(blastout)
   blastoutxml.iter <- XML::xpathSApply(blastoutxml, "//Iteration"); 
   blastdfname <- c( )
+  message("... parsing the XML output ...")
   xmlDocListHit <- lapply( blastoutxml.iter, function(x){
-    message("... parsing the XML output ...")
     x <- xmlDoc(x)
     blastdfname <<- c(blastdfname,xmlToDataFrame(xpathSApply( x, "//Iteration" ))[,c("Iteration_query-ID")])					
     queryLength <- xmlToDataFrame(xpathSApply( x, "//Iteration" ))[,c("Iteration_query-len")]
