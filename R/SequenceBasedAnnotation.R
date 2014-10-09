@@ -144,6 +144,26 @@ NcbiBlastAnnotation = function( annotName=annotName, pathToFile, inputStringSet,
 
 #' @rdname annotationSummary-method
 setMethod("annotationSummary", signature("NcbiBlastAnnotation"), function(object,... ){
-  return(do.call(rbind,annotationL(object)))
+  #first easy conversion is done if all rows are annotated it will return the list as it is
+  resdf = do.call(rbind, annotationL(object) )
+  #otherwise it will fill the data.frame with empty rows
+  if( dim(resdf)[1] != length(annotationL(object)) & dim(resdf)[1] != 0 ){
+    message("... empty blast lines found -> filling the gaps ...")
+    empty_df = resdf[1,]
+    empty_df[1,] = c(1,rep(NA,dim(resdf[1,])[2]-1) )
+    resdf = lapply(  names( annotationL(object) ) , function(dfCurrName){
+      
+      dfCurr = annotationL(object)[[dfCurrName]]
+      #if the annotation returned an empty result it is replaced here by the empty_df
+      if( dim( dfCurr )[1] == 0  ){
+        dfCurr = empty_df
+        rownames(dfCurr) = dfCurrName
+      }
+      return(dfCurr)
+    })
+    #generate data.frame
+    resdf = do.call(rbind, resdf)
+  }
+  return(resdf)
 })
 
